@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  roadmap-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: roadmap-ai:latest
+    container_name: roadmap-ai-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:roadmap.db
+      - JWT_SECRET=roadmap-ai-docker-secret-key-2026
+    volumes:
+      - roadmap-data:/app/data
+
+volumes:
+  roadmap-data:
+    driver: local
