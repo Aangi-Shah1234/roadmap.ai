@@ -16,9 +16,6 @@ export default function LoginPage() {
 
   const handleRoleTab = (newRole: "learner" | "admin") => {
     setRole(newRole);
-    if (!email || email === "admin@roadmap.ai" || email === "learner@roadmap.ai") {
-      setEmail(newRole === "admin" ? "admin@roadmap.ai" : "learner@roadmap.ai");
-    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

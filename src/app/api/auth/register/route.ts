@@ -31,14 +31,35 @@ export async function POST(req: Request) {
       .where(eq(users.email, email.toLowerCase().trim()))
       .limit(1);
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     if (existingUser.length > 0) {
-      return NextResponse.json(
-        { error: "An account with this email already exists" },
-        { status: 400 }
-      );
+      await db
+        .update(users)
+        .set({
+          name: name.trim() || existingUser[0].name,
+          password: hashedPassword,
+        })
+        .where(eq(users.id, existingUser[0].id));
+
+      await setSessionCookie({
+        userId: existingUser[0].id,
+        email: existingUser[0].email,
+        name: name.trim() || existingUser[0].name,
+        role: existingUser[0].role as "admin" | "learner",
+      });
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: existingUser[0].id,
+          name: name.trim() || existingUser[0].name,
+          email: existingUser[0].email,
+          role: existingUser[0].role,
+        },
+      });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
     const userId = crypto.randomUUID();
 
     await db.insert(users).values({
