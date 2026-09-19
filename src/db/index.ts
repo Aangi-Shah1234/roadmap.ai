@@ -3,8 +3,17 @@ import { createClient } from "@libsql/client";
 import * as schema from "./schema";
 
 const defaultDbPath = process.env.VERCEL ? "file:/tmp/roadmap.db" : "file:roadmap.db";
-const url = process.env.DATABASE_URL || defaultDbPath;
-const authToken = process.env.DATABASE_AUTH_TOKEN;
+const url =
+  process.env.DATABASE_URL ||
+  process.env.TURSO_DATABASE_URL ||
+  process.env.TURSO_URL ||
+  process.env.STORAGE_URL ||
+  defaultDbPath;
+
+const authToken =
+  process.env.DATABASE_AUTH_TOKEN ||
+  process.env.TURSO_AUTH_TOKEN ||
+  process.env.STORAGE_AUTH_TOKEN;
 
 const client = createClient({
   url,
