@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
+import { db, ensureDatabaseReady } from "@/db";
 import { subjects, milestones, topics, userProgress } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function GET() {
   try {
+    await ensureDatabaseReady();
     const user = await getCurrentUser();
     const allSubjects = await db.select().from(subjects);
 

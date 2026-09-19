@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
+import { db, ensureDatabaseReady } from "@/db";
 import { userProgress } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -7,6 +7,7 @@ import crypto from "crypto";
 
 export async function POST(req: Request) {
   try {
+    await ensureDatabaseReady();
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json(

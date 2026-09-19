@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
+import { db, ensureDatabaseReady } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -8,6 +8,7 @@ import { setSessionCookie } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
+    await ensureDatabaseReady();
     const { name, email, password } = await req.json();
 
     if (!name || !email || !password) {

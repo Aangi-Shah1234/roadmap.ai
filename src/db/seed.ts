@@ -3,15 +3,17 @@ import { users, subjects, milestones, topics, userProgress } from "./schema";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-async function seed() {
+export async function seed(clearExisting = true) {
   console.log("🌱 Seeding database...");
 
-  // Clear existing data in reverse order of foreign keys
-  await db.delete(userProgress);
-  await db.delete(topics);
-  await db.delete(milestones);
-  await db.delete(subjects);
-  await db.delete(users);
+  if (clearExisting) {
+    // Clear existing data in reverse order of foreign keys
+    await db.delete(userProgress);
+    await db.delete(topics);
+    await db.delete(milestones);
+    await db.delete(subjects);
+    await db.delete(users);
+  }
 
   // 1. Create Users
   const adminPasswordHash = await bcrypt.hash("AdminPassword123!", 10);
@@ -1104,7 +1106,9 @@ async function seed() {
   console.log("✅ Database seeded successfully with all Whole-IT tracks!");
 }
 
-seed().catch((err) => {
-  console.error("❌ Seed failed:", err);
-  process.exit(1);
-});
+if (process.argv[1]?.includes("seed")) {
+  seed().catch((err) => {
+    console.error("❌ Seed failed:", err);
+    process.exit(1);
+  });
+}

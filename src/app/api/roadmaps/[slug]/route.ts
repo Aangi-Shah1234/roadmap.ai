@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/db";
+import { db, ensureDatabaseReady } from "@/db";
 import { subjects, milestones, topics, userProgress } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -9,6 +9,7 @@ export async function GET(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    await ensureDatabaseReady();
     const { slug } = await params;
     const user = await getCurrentUser();
 
