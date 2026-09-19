@@ -388,6 +388,708 @@ async function seed() {
     }
   }
 
+  // Helper for seeding new IT tracks
+  async function seedTrackHelper(track: {
+    title: string;
+    slug: string;
+    description: string;
+    icon: string;
+    category: string;
+    milestones: {
+      title: string;
+      description: string;
+      level: "Beginner" | "Intermediate" | "Advanced";
+      topics: {
+        title: string;
+        description: string;
+        resources: string;
+      }[];
+    }[];
+  }) {
+    const subjId = crypto.randomUUID();
+    await db.insert(subjects).values({
+      id: subjId,
+      title: track.title,
+      slug: track.slug,
+      description: track.description,
+      icon: track.icon,
+      category: track.category,
+      createdAt: new Date(),
+    });
+
+    for (let mIdx = 0; mIdx < track.milestones.length; mIdx++) {
+      const m = track.milestones[mIdx];
+      const mId = crypto.randomUUID();
+      await db.insert(milestones).values({
+        id: mId,
+        subjectId: subjId,
+        title: m.title,
+        description: m.description,
+        order: mIdx + 1,
+        level: m.level,
+        createdAt: new Date(),
+      });
+
+      for (let tIdx = 0; tIdx < m.topics.length; tIdx++) {
+        const t = m.topics[tIdx];
+        await db.insert(topics).values({
+          id: crypto.randomUUID(),
+          milestoneId: mId,
+          title: t.title,
+          description: t.description,
+          resources: t.resources,
+          order: tIdx + 1,
+          createdAt: new Date(),
+        });
+      }
+    }
+    console.log(`✓ Seeded IT Track: ${track.title}`);
+  }
+
+  // 4. Frontend Engineering Track
+  await seedTrackHelper({
+    title: "Frontend Engineering",
+    slug: "frontend",
+    description: "From semantic HTML/CSS and JavaScript to React 19, Next.js App Router, Tailwind, and Web Performance.",
+    icon: "Layout",
+    category: "Software Engineering",
+    milestones: [
+      {
+        title: "Semantic HTML5 & Modern CSS",
+        description: "Modern web fundamentals: semantic accessibility, Flexbox, CSS Grid, and design systems.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Semantic Layouts & Web Accessibility (a11y)",
+            description: "Build accessible web applications with semantic tags, ARIA roles, and screen-reader standards.",
+            resources: JSON.stringify([
+              { title: "MDN HTML Semantics", url: "https://developer.mozilla.org/en-US/docs/Glossary/Semantics", type: "doc" },
+              { title: "WebAIM Accessibility Checklist", url: "https://webaim.org/standards/wcag/checklist", type: "doc" }
+            ]),
+          },
+          {
+            title: "Modern CSS Grid & Flexbox Mastery",
+            description: "Create fluid, responsive multi-column layouts without layout shift using CSS Grid and Flexbox.",
+            resources: JSON.stringify([
+              { title: "A Complete Guide to Flexbox", url: "https://css-tricks.com/snippets/css/a-guide-to-flexbox/", type: "tutorial" },
+              { title: "CSS Grid Guide", url: "https://css-tricks.com/snippets/css/complete-guide-grid/", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Modern JavaScript (ES6+) & TypeScript",
+        description: "Master language mechanics, asynchronous control flow, and strict static type systems.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "ES6+ Syntax, Async/Await & Event Loop",
+            description: "Destructuring, arrow functions, promises, microtasks, and the JavaScript runtime loop.",
+            resources: JSON.stringify([
+              { title: "JavaScript.info Modern Tutorial", url: "https://javascript.info/", type: "tutorial" }
+            ]),
+          },
+          {
+            title: "TypeScript Generics, Interfaces & Discriminated Unions",
+            description: "Eliminate runtime errors with type narrowing, generic utility types, and strict TS configs.",
+            resources: JSON.stringify([
+              { title: "TypeScript Handbook", url: "https://www.typescriptlang.org/docs/handbook/intro.html", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "React 19 & Component Architecture",
+        description: "Build reactive, reusable user interfaces using modern hooks, state, and server actions.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "React Hooks (useState, useEffect, useMemo, useCallback)",
+            description: "Manage component lifecycles, memoize expensive calculations, and avoid accidental re-renders.",
+            resources: JSON.stringify([
+              { title: "Official React Documentation", url: "https://react.dev/", type: "doc" }
+            ]),
+          },
+          {
+            title: "Custom Hooks & Compound Component Patterns",
+            description: "Encapsulate complex UI behaviors into clean, reusable declarative interfaces.",
+            resources: JSON.stringify([
+              { title: "Patterns.dev React Design Patterns", url: "https://www.patterns.dev/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Next.js App Router & Server Components",
+        description: "Harness hybrid server/client rendering, streaming SSR, and zero-bundle-size server components.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Server Components vs Client Components ('use client')",
+            description: "Architect Next.js applications by keeping data fetching on the server and interactivity on the client.",
+            resources: JSON.stringify([
+              { title: "Next.js App Router Docs", url: "https://nextjs.org/docs", type: "doc" }
+            ]),
+          },
+          {
+            title: "Server Actions, Mutations & Optimistic Updates",
+            description: "Mutate backend data seamlessly without dedicated REST endpoints using React Server Actions.",
+            resources: JSON.stringify([
+              { title: "Next.js Server Actions Guide", url: "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "State Management & Data Fetching",
+        description: "Coordinate client state, cache server data, and handle optimistic mutations cleanly.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "TanStack Query (React Query) & SWR Caching",
+            description: "Automatic background refetching, query invalidation, and deduplication of network requests.",
+            resources: JSON.stringify([
+              { title: "TanStack Query Docs", url: "https://tanstack.com/query/latest", type: "doc" }
+            ]),
+          },
+          {
+            title: "Zustand & Global State Stores",
+            description: "Lightweight, unopinionated client-side state without boilerplate or provider hell.",
+            resources: JSON.stringify([
+              { title: "Zustand Documentation", url: "https://docs.pmnd.rs/zustand/getting-started/introduction", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Web Performance & Core Web Vitals",
+        description: "Benchmark and optimize load speed, Largest Contentful Paint, and bundle footprints.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Core Web Vitals Optimization (LCP, INP, CLS)",
+            description: "Minimize cumulative layout shift, optimize critical rendering paths, and preload key fonts.",
+            resources: JSON.stringify([
+              { title: "Web.dev Core Web Vitals", url: "https://web.dev/vitals/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
+  // 5. Backend Engineering Track
+  await seedTrackHelper({
+    title: "Backend Engineering",
+    slug: "backend",
+    description: "Build high-throughput server systems with Node.js, Go, Python, REST & GraphQL, PostgreSQL, and Caching.",
+    icon: "Server",
+    category: "Software Engineering",
+    milestones: [
+      {
+        title: "Backend Runtimes & Languages",
+        description: "Understand server runtimes, concurrency models, and non-blocking I/O architectures.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Node.js Event Loop & Stream Processing",
+            description: "Understand libuv, the event loop phases, backpressure, and piping high-volume file streams.",
+            resources: JSON.stringify([
+              { title: "Node.js Architecture Guide", url: "https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/", type: "doc" }
+            ]),
+          },
+          {
+            title: "Go Concurrency with Goroutines & Channels",
+            description: "Write high-performance concurrent backend services with Go channels, sync.WaitGroup, and mutexes.",
+            resources: JSON.stringify([
+              { title: "Tour of Go Concurrency", url: "https://go.dev/tour/concurrency/1", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "API Design (REST & GraphQL)",
+        description: "Design intuitive, versioned, and idempotent APIs for clients and third parties.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "RESTful Conventions, Idempotency & HTTP Codes",
+            description: "Correct usage of GET, POST, PUT, PATCH, DELETE, Idempotency-Key headers, and pagination.",
+            resources: JSON.stringify([
+              { title: "RESTful API Best Practices", url: "https://restfulapi.net/", type: "doc" }
+            ]),
+          },
+          {
+            title: "GraphQL Schemas, Resolvers & DataLoader",
+            description: "Solve the N+1 problem with DataLoader, write type-safe queries, and build flexible mutation schemas.",
+            resources: JSON.stringify([
+              { title: "Official GraphQL Documentation", url: "https://graphql.org/learn/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Relational Databases & SQL Mastery",
+        description: "Schema design, relational constraints, indexing strategies, and ACID compliance.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "PostgreSQL Indexing, B-Trees & Query Optimization",
+            description: "Diagnose slow queries using EXPLAIN ANALYZE, B-tree indexes, GIN indexes, and composite keys.",
+            resources: JSON.stringify([
+              { title: "Use The Index, Luke (SQL Indexing)", url: "https://use-the-index-luke.com/", type: "tutorial" }
+            ]),
+          },
+          {
+            title: "Transactions, Isolation Levels & Deadlock Prevention",
+            description: "Read Committed, Repeatable Read, and Serializable isolation levels with row-level locking.",
+            resources: JSON.stringify([
+              { title: "PostgreSQL Transaction Isolation", url: "https://www.postgresql.org/docs/current/transaction-iso.html", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "NoSQL & In-Memory Caching (Redis)",
+        description: "Accelerate read throughput and manage distributed ephemeral data.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Redis Caching Strategies (Cache-Aside, Write-Through)",
+            description: "Prevent cache thundering herds, configure TTL eviction, and store structured data in Redis.",
+            resources: JSON.stringify([
+              { title: "Redis University & Docs", url: "https://redis.io/docs/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Authentication, Sessions & Security",
+        description: "Secure backend services against unauthorized access and common cyber vulnerabilities.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "JWT, Refresh Tokens & OAuth 2.0 PKCE",
+            description: "Stateless token authentication, token rotation, cryptographic signing, and OAuth 2.0 scopes.",
+            resources: JSON.stringify([
+              { title: "Auth0 OAuth & JWT Handbook", url: "https://auth0.com/learn", type: "doc" }
+            ]),
+          },
+          {
+            title: "Rate Limiting, CORS & Input Sanitization",
+            description: "Protect APIs from brute-force DDoS attacks using token bucket rate limiters and strict CORS policies.",
+            resources: JSON.stringify([
+              { title: "OWASP API Security Top 10", url: "https://owasp.org/www-project-api-security/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Message Queues & Microservices",
+        description: "Decouple backend operations using asynchronous message brokers.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "RabbitMQ & Celery / BullMQ Background Jobs",
+            description: "Process long-running email, PDF, and image transcoding tasks outside HTTP request cycles.",
+            resources: JSON.stringify([
+              { title: "RabbitMQ Getting Started", url: "https://www.rabbitmq.com/tutorials", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
+  // 6. Full Stack Web Development Track
+  await seedTrackHelper({
+    title: "Full Stack Development",
+    slug: "fullstack",
+    description: "End-to-end modern web applications with TypeScript, Next.js, Drizzle/Prisma ORM, PostgreSQL, and Auth.",
+    icon: "Layers",
+    category: "Software Engineering",
+    milestones: [
+      {
+        title: "Full Stack Architecture Fundamentals",
+        description: "Connecting clients, APIs, database layers, and deployment targets cohesively.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Client-Server Data Flow & 3-Tier Architecture",
+            description: "How requests move from browser DOM through HTTP/SSR boundaries to database engines.",
+            resources: JSON.stringify([
+              { title: "Full Stack Open Curriculum", url: "https://fullstackopen.com/en/", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "End-to-End Type Safety with TypeScript",
+        description: "Eliminate runtime boundary bugs with shared types and runtime schema validators.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Zod Schema Validation & Type Inference",
+            description: "Validate client form payloads and incoming server request bodies with inferred static types.",
+            resources: JSON.stringify([
+              { title: "Zod Documentation", url: "https://zod.dev/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Database Modeling with Modern ORMs",
+        description: "Declarative schemas, typesafe query builders, and automated database migrations.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Drizzle ORM & Prisma Schema Migrations",
+            description: "Write SQL-like TypeScript queries, handle relations, and execute declarative database migrations.",
+            resources: JSON.stringify([
+              { title: "Drizzle ORM Documentation", url: "https://orm.drizzle.team/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Production Authentication & Authorization",
+        description: "Implement secure member accounts, session cookies, and role-based permissions.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Session Cookies, Password Hashing & RBAC",
+            description: "Salted bcrypt passwords, cryptographically signed HttpOnly cookies, and member access guards.",
+            resources: JSON.stringify([
+              { title: "OWASP Session Management", url: "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Fullstack Testing (Unit, Integration & E2E)",
+        description: "Verify every layer of the full stack with automated tests.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Vitest & Playwright End-to-End Testing",
+            description: "Run automated browser flows to verify sign-in, user flows, and database mutations in CI.",
+            resources: JSON.stringify([
+              { title: "Playwright Documentation", url: "https://playwright.dev/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Containerizing & Deploying Full Stack Apps",
+        description: "Multi-stage Docker builds and automated cloud deployments.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Multi-Stage Dockerfiles for Next.js & Fullstack Apps",
+            description: "Build tiny production container images and deploy to modern container clouds.",
+            resources: JSON.stringify([
+              { title: "Next.js with Docker Guide", url: "https://github.com/vercel/next.js/tree/canary/examples/with-docker", type: "doc" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
+  // 7. AI & Machine Learning Track
+  await seedTrackHelper({
+    title: "AI & Machine Learning",
+    slug: "ai-ml",
+    description: "Python data science, PyTorch neural networks, Transformers, LLM fine-tuning, Vector DBs, and RAG.",
+    icon: "Sparkles",
+    category: "Data & AI",
+    milestones: [
+      {
+        title: "Python for Data Science & Mathematics",
+        description: "NumPy arrays, vectorization, Pandas DataFrames, and linear algebra foundations.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "NumPy Arrays & Vectorized Matrix Computations",
+            description: "Eliminate slow Python loops using vectorized C-backed multidimensional array operations.",
+            resources: JSON.stringify([
+              { title: "NumPy Official Tutorials", url: "https://numpy.org/doc/stable/user/quickstart.html", type: "tutorial" }
+            ]),
+          },
+          {
+            title: "Pandas Data Cleaning & Feature Engineering",
+            description: "Manipulate structured tabular datasets, handle missing values, and group aggregations.",
+            resources: JSON.stringify([
+              { title: "10 Minutes to Pandas", url: "https://pandas.pydata.org/docs/user_guide/10min.html", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Core Machine Learning Foundations",
+        description: "Supervised and unsupervised learning, regression, classification, and evaluation metrics.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Scikit-Learn Classifiers, Regressors & Validation",
+            description: "Train Random Forests, Gradient Boosters, cross-validate models, and compute F1/ROC-AUC scores.",
+            resources: JSON.stringify([
+              { title: "Scikit-Learn Documentation", url: "https://scikit-learn.org/stable/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Deep Learning & Neural Networks (PyTorch)",
+        description: "Tensors, computational graphs, backpropagation, and training deep neural nets.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "PyTorch Tensors, Autograd & Custom Modules",
+            description: "Build custom nn.Module architectures, compute loss gradients, and optimize with AdamW.",
+            resources: JSON.stringify([
+              { title: "Deep Learning with PyTorch: A 60 Minute Blitz", url: "https://pytorch.org/tutorials/beginner/deep_learning_60min_blitz.html", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Transformers & Large Language Models (LLMs)",
+        description: "Self-attention mechanism, Hugging Face transformers, and prompt engineering.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Self-Attention Architecture & Hugging Face Pipeline",
+            description: "How transformers process tokens in parallel, position embeddings, and generating inference.",
+            resources: JSON.stringify([
+              { title: "Illustrated Transformer by Jay Alammar", url: "https://jalammar.github.io/illustrated-transformer/", type: "tutorial" },
+              { title: "Hugging Face Course", url: "https://huggingface.co/course/chapter1/1", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Vector Databases & Retrieval-Augmented Generation (RAG)",
+        description: "Connect proprietary data to LLMs using dense vector search and semantic retrieval.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Dense Embeddings, Pinecone / Chroma & LangChain RAG",
+            description: "Chunk documents, generate vector embeddings, and retrieve relevant context for LLM generation.",
+            resources: JSON.stringify([
+              { title: "Pinecone Learning Center", url: "https://www.pinecone.io/learn/", type: "doc" },
+              { title: "LangChain Documentation", url: "https://python.langchain.com/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "MLOps & Production Model Deployment",
+        description: "Serve models with high throughput, low latency, and continuous drift monitoring.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "FastAPI Model Serving, Docker & vLLM Inference",
+            description: "Package model weights into high-throughput inference endpoints with streaming response tokens.",
+            resources: JSON.stringify([
+              { title: "vLLM Production Serving Guide", url: "https://docs.vllm.ai/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
+  // 8. Cybersecurity & Ethical Hacking Track
+  await seedTrackHelper({
+    title: "Cybersecurity & Ethical Hacking",
+    slug: "cybersecurity",
+    description: "Defend applications and infrastructure: OWASP Top 10, Network Penetration, Cryptography, and Zero Trust.",
+    icon: "ShieldCheck",
+    category: "Security & Systems",
+    milestones: [
+      {
+        title: "Network Security & Packet Analysis",
+        description: "Protocols, port scanning, traffic sniffing, and firewall rules.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Port Scanning with Nmap & Wireshark Packet Inspection",
+            description: "Identify open ports, active services, and analyze raw TCP packets during handshakes.",
+            resources: JSON.stringify([
+              { title: "Nmap Network Scanning Guide", url: "https://nmap.org/book/man.html", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Web Application Security (OWASP Top 10)",
+        description: "Exploit and patch the most critical web vulnerabilities found in enterprise apps.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "SQL Injection (SQLi), Cross-Site Scripting (XSS) & CSRF",
+            description: "Demonstrate attack vectors in sandbox environments and implement parameterized defenses.",
+            resources: JSON.stringify([
+              { title: "PortSwigger Web Security Academy", url: "https://portswigger.net/web-security", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Cryptography & Public Key Infrastructure",
+        description: "Encryption algorithms, digital signatures, certificates, and TLS handshakes.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Symmetric vs Asymmetric Ciphers (AES, RSA, ECC)",
+            description: "Mathematical principles of modern encryption, key exchange, and SSL/TLS certificate chains.",
+            resources: JSON.stringify([
+              { title: "Crypto101 Free Course", url: "https://www.crypto101.io/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Ethical Hacking & Penetration Testing",
+        description: "Reconnaissance, vulnerability scanning, exploitation, and privilege escalation.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Burp Suite Interception & Metasploit Framework",
+            description: "Intercept and tamper with HTTP requests, inspect session cookies, and automate security auditing.",
+            resources: JSON.stringify([
+              { title: "Metasploit Unleashed Tutorial", url: "https://www.offsec.com/metasploit-unleashed/", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Cloud Security & Zero Trust Architecture",
+        description: "Harden cloud environments, enforce least privilege, and prevent lateral movement.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "IAM Policy Hardening & Zero Trust Network Access",
+            description: "Eliminate static access keys, configure temporary STS credentials, and enforce mTLS between microservices.",
+            resources: JSON.stringify([
+              { title: "NIST Zero Trust Architecture Guide", url: "https://csrc.nist.gov/publications/detail/sp/800-207/final", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Incident Response & SOC Operations",
+        description: "Detect active breaches, analyze audit logs, and recover compromised infrastructure.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "SIEM Log Analysis (Elasticsearch & Wazuh) & Forensics",
+            description: "Correlate security events, detect lateral movement indicators, and execute incident containment runbooks.",
+            resources: JSON.stringify([
+              { title: "SANS Incident Handler's Handbook", url: "https://www.sans.org/white-papers/33393/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
+  // 9. System Design & Distributed Systems Track
+  await seedTrackHelper({
+    title: "System Design & Architecture",
+    slug: "system-design",
+    description: "Architect massive-scale distributed systems: Load balancing, Caching, DB Sharding, Kafka, and Fault Tolerance.",
+    icon: "Compass",
+    category: "Security & Systems",
+    milestones: [
+      {
+        title: "Scalability & Distributed System Principles",
+        description: "Core mental models for systems serving millions of concurrent requests.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Throughput, Latency, SLA/SLO & The CAP Theorem",
+            description: "Consistency vs Availability trade-offs, network partitions, and measuring p95/p99 latency percentiles.",
+            resources: JSON.stringify([
+              { title: "System Design Primer by Donne Martin", url: "https://github.com/donnemartin/system-design-primer", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Load Balancing & Traffic Routing",
+        description: "Distribute incoming traffic across server pools reliably.",
+        level: "Beginner",
+        topics: [
+          {
+            title: "Layer 4 vs Layer 7 Load Balancing & Consistent Hashing",
+            description: "TCP vs HTTP load balancing, consistent hashing rings for caching tiers, and sticky sessions.",
+            resources: JSON.stringify([
+              { title: "Nginx Load Balancing Guide", url: "https://docs.nginx.com/nginx/admin-guide/load-balancer/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Distributed Caching & Content Delivery Networks",
+        description: "Sub-millisecond data retrieval and global edge delivery.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Redis Cluster Topologies & Cache Invalidation Strategies",
+            description: "Master Cache-Aside, Write-Through, Write-Back, and solve cache stampede with distributed mutexes.",
+            resources: JSON.stringify([
+              { title: "High Scalability Distributed Caching", url: "http://highscalability.com/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Database Partitioning & Sharding",
+        description: "Scaling relational and document databases past single-node limits.",
+        level: "Intermediate",
+        topics: [
+          {
+            title: "Horizontal Database Sharding, Replication & Split-Brain",
+            description: "Partition keys, cross-shard queries, primary-replica replication lag, and quorum consensus.",
+            resources: JSON.stringify([
+              { title: "Designing Data-Intensive Applications (Kleppmann)", url: "https://dataintensive.net/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Distributed Messaging & Event Streaming (Kafka)",
+        description: "High-throughput asynchronous communication between microservices.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Apache Kafka Topics, Partitions, Consumer Groups & Durability",
+            description: "Commit logs, ordered partition processing, at-least-once vs exactly-once semantics, and compaction.",
+            resources: JSON.stringify([
+              { title: "Confluent Kafka Architecture Guide", url: "https://developer.confluent.io/what-is-apache-kafka/", type: "tutorial" }
+            ]),
+          },
+        ],
+      },
+      {
+        title: "Resilience, Fault Tolerance & Disaster Recovery",
+        description: "Survive datacenter outages and cascade failures gracefully.",
+        level: "Advanced",
+        topics: [
+          {
+            title: "Circuit Breakers, Bulkheads & Active-Active Multi-Region",
+            description: "Prevent cascading failures with exponential backoff, jitter, circuit breakers, and geo-replicated architectures.",
+            resources: JSON.stringify([
+              { title: "AWS Well-Architected Reliability Pillar", url: "https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/", type: "doc" }
+            ]),
+          },
+        ],
+      },
+    ],
+  });
+
   // Pre-seed 1 completed topic for the demo learner so progress bars show up
   if (firstTopicIdForProgress) {
     await db.insert(userProgress).values({
@@ -399,7 +1101,7 @@ async function seed() {
     });
   }
 
-  console.log("✅ Database seeded successfully!");
+  console.log("✅ Database seeded successfully with all Whole-IT tracks!");
 }
 
 seed().catch((err) => {

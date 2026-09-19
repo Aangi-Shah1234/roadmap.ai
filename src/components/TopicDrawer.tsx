@@ -52,39 +52,39 @@ export default function TopicDrawer({
   const getResourceIcon = (type: string) => {
     switch (type) {
       case "video":
-        return <Video className="h-4 w-4 text-rose-400" />;
+        return <Video className="h-4 w-4 text-rose-500" />;
       case "tutorial":
-        return <Sparkles className="h-4 w-4 text-amber-400" />;
+        return <Sparkles className="h-4 w-4 text-amber-500" />;
       default:
-        return <BookOpen className="h-4 w-4 text-blue-400" />;
+        return <BookOpen className="h-4 w-4 text-indigo-500" />;
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end transition-opacity">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex justify-end transition-opacity">
       {/* Backdrop click to close */}
       <div className="flex-1" onClick={onClose} />
 
-      {/* Drawer Content */}
-      <div className="w-full max-w-md bg-zinc-900 border-l border-zinc-800 shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-200">
+      {/* Drawer Container */}
+      <div className="w-full max-w-md bg-[var(--bg-surface)] border-l border-[var(--border-color)] shadow-2xl flex flex-col h-full animate-in slide-in-from-right duration-250">
         {/* Header */}
-        <div className="p-5 border-b border-zinc-800 flex items-start justify-between bg-zinc-950/40">
+        <div className="p-6 border-b border-[var(--border-color)] flex items-start justify-between bg-[var(--bg-subtle)]/40">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-color)]">
                 {topic.milestoneTitle}
               </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/60">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 {topic.level}
               </span>
             </div>
-            <h2 className="text-xl font-bold text-white tracking-tight">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight">
               {topic.title}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+            className="p-1.5 rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-subtle)] transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -92,30 +92,30 @@ export default function TopicDrawer({
 
         {/* Body */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
-          {/* Completion Status Box */}
+          {/* Completion Status Card */}
           <div
-            className={`p-4 rounded-xl border flex items-center justify-between transition-all ${
+            className={`p-4 rounded-2xl border flex items-center justify-between transition ${
               topic.isCompleted
-                ? "bg-emerald-950/20 border-emerald-500/40 text-emerald-300"
-                : "bg-zinc-800/40 border-zinc-700/60 text-zinc-300"
+                ? "bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300"
+                : "bg-[var(--bg-subtle)] border-[var(--border-color)] text-[var(--text-primary)]"
             }`}
           >
             <div className="flex items-center gap-3">
               {topic.isCompleted ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
               ) : (
-                <Circle className="h-5 w-5 text-zinc-500 shrink-0" />
+                <Circle className="h-5 w-5 text-[var(--text-secondary)] shrink-0" />
               )}
               <div>
-                <p className="text-sm font-semibold">
-                  {topic.isCompleted ? "Topic Completed" : "Not Completed Yet"}
+                <p className="text-xs font-bold">
+                  {topic.isCompleted ? "Topic Completed" : "Not Finished Yet"}
                 </p>
-                <p className="text-xs text-zinc-400">
+                <p className="text-[11px] text-[var(--text-secondary)]">
                   {isLoggedIn
                     ? topic.isCompleted
-                      ? "Great job! This is marked on your roadmap."
-                      : "Mark complete once you've learned this concept."
-                    : "Sign in to save and track your progress."}
+                      ? "Saved on your roadmap."
+                      : "Mark complete once learned."
+                    : "Sign in to save progress."}
                 </p>
               </div>
             </div>
@@ -123,32 +123,32 @@ export default function TopicDrawer({
             <button
               onClick={handleToggle}
               disabled={updating}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition disabled:opacity-50 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition disabled:opacity-50 ${
                 topic.isCompleted
-                  ? "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
-                  : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/30"
+                  ? "bg-[var(--bg-surface)] border border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+                  : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs shadow-indigo-600/20"
               }`}
             >
-              {updating ? "Saving..." : topic.isCompleted ? "Mark Incomplete" : "Mark Done"}
+              {updating ? "Saving..." : topic.isCompleted ? "Undo" : "Mark Done"}
             </button>
           </div>
 
-          {/* Overview & Description */}
+          {/* Overview */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5 text-indigo-400" />
-              About this Topic
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
+              <FileText className="h-3.5 w-3.5 text-indigo-500" />
+              Concept Overview
             </h3>
-            <div className="text-sm text-zinc-300 leading-relaxed bg-zinc-950/50 p-4 rounded-xl border border-zinc-800">
-              {topic.description || "No description provided for this topic yet."}
+            <div className="text-sm text-[var(--text-primary)] leading-relaxed bg-[var(--bg-subtle)]/60 p-4 rounded-2xl border border-[var(--border-color)]">
+              {topic.description || "No detailed notes provided for this topic yet."}
             </div>
           </div>
 
-          {/* Learning Resources */}
+          {/* Resources */}
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-2 flex items-center gap-1.5">
-              <BookOpen className="h-3.5 w-3.5 text-indigo-400" />
-              Curated Free Resources ({topic.resources?.length || 0})
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2.5 flex items-center gap-1.5">
+              <BookOpen className="h-3.5 w-3.5 text-indigo-500" />
+              Free Resources ({topic.resources?.length || 0})
             </h3>
             {topic.resources && topic.resources.length > 0 ? (
               <div className="space-y-2">
@@ -158,30 +158,30 @@ export default function TopicDrawer({
                     href={res.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between p-3 rounded-lg bg-zinc-950/40 hover:bg-zinc-800/80 border border-zinc-800 hover:border-zinc-700 text-sm group transition"
+                    className="flex items-center justify-between p-3.5 rounded-2xl bg-[var(--bg-subtle)]/60 hover:bg-[var(--bg-subtle)] border border-[var(--border-color)] hover:border-indigo-400 text-xs font-semibold group transition shadow-2xs"
                   >
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
                       {getResourceIcon(res.type)}
-                      <span className="font-medium text-zinc-200 group-hover:text-indigo-300 transition-colors">
+                      <span className="text-[var(--text-primary)] group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                         {res.title}
                       </span>
                     </div>
-                    <ExternalLink className="h-4 w-4 text-zinc-500 group-hover:text-zinc-300 transition-colors shrink-0" />
+                    <ExternalLink className="h-4 w-4 text-[var(--text-secondary)] group-hover:text-indigo-500 transition-colors shrink-0" />
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-zinc-500 italic">No resources added yet.</p>
+              <p className="text-xs text-[var(--text-secondary)] italic">No links added yet.</p>
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-800 bg-zinc-950/60 flex items-center justify-between text-xs text-zinc-400">
-          <span>Roadmap AI Learning Path</span>
+        <div className="p-4 border-t border-[var(--border-color)] bg-[var(--bg-subtle)]/40 flex items-center justify-between text-xs text-[var(--text-secondary)]">
+          <span className="font-bold text-[var(--text-primary)]">Roadmap AI</span>
           <button
             onClick={onClose}
-            className="px-3 py-1.5 rounded-md hover:bg-zinc-800 text-zinc-300 transition"
+            className="px-4 py-1.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-primary)] transition text-xs font-semibold"
           >
             Close
           </button>

@@ -9,9 +9,7 @@ import {
   CheckCircle2,
   BookOpen,
   ArrowRight,
-  Sparkles,
-  Terminal,
-  Cloud,
+  Layers,
   LayoutDashboard,
 } from "lucide-react";
 
@@ -65,10 +63,10 @@ export default function DashboardPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col">
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col transition-colors duration-200">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
-          <div className="h-8 w-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="h-8 w-8 border-3 border-[var(--periwinkle-deep)] border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -82,108 +80,109 @@ export default function DashboardPage() {
       : 0;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col transition-colors duration-200">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-10 w-full flex-1">
-        {/* Welcome Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-zinc-800">
+      <main className="max-w-6xl mx-auto px-6 sm:px-12 py-10 w-full flex-1">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[var(--line)]">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/50">
-                Learner Dashboard
-              </span>
-            </div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            <span className="ghost-pill mb-2 inline-flex text-[11px] font-semibold">
+              Learner Profile
+            </span>
+            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[var(--ink)] tracking-tight mt-2">
               Welcome back, {user.name} 👋
             </h1>
-            <p className="text-sm text-zinc-400 mt-1">
-              Track your milestones, review learned topics, and keep progressing.
+            <p className="text-xs sm:text-sm text-[var(--ink-soft)] mt-1 font-medium">
+              Track your milestones, review learned concepts, and keep progressing.
             </p>
           </div>
 
           <Link
             href="/"
-            className="self-start sm:self-auto flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-sm font-medium text-white transition"
+            className="pill-btn self-start sm:self-auto inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold"
           >
-            Explore Roadmaps
-            <ArrowRight className="h-4 w-4" />
+            Explore Tracks
+            <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        {/* Overview Stats Cards */}
+        {/* 3 Pastel Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8">
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Active Tracks</span>
-              <BookOpen className="h-5 w-5 text-indigo-400" />
+          {/* Card 1: Periwinkle */}
+          <div className="p-6 rounded-2xl stat-card-periwinkle flex flex-col justify-between shadow-xs transition-colors">
+            <div className="flex items-center justify-between text-[var(--periwinkle-deep)] mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider">Active Trails</span>
+              <BookOpen className="h-4 w-4" />
             </div>
-            <div className="text-3xl font-bold text-white">{subjects.length}</div>
-            <p className="text-xs text-zinc-500 mt-1">DevOps & Cloud pathways</p>
+            <div className="font-display text-3xl font-semibold text-[var(--ink)]">{subjects.length}</div>
+            <p className="text-xs text-[var(--ink-soft)] mt-1 font-medium">DevOps &amp; Cloud engineering</p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Topics Mastered</span>
-              <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+          {/* Card 2: Sage */}
+          <div className="p-6 rounded-2xl stat-card-sage flex flex-col justify-between shadow-xs transition-colors">
+            <div className="flex items-center justify-between text-[var(--sage-deep)] mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider">Topics Mastered</span>
+              <CheckCircle2 className="h-4 w-4" />
             </div>
-            <div className="text-3xl font-bold text-white">
+            <div className="font-display text-3xl font-semibold text-[var(--ink)]">
               {completedTopicsOverall}{" "}
-              <span className="text-base font-normal text-zinc-500">/ {totalTopicsOverall}</span>
+              <span className="text-sm font-normal text-[var(--ink-soft)]">/ {totalTopicsOverall}</span>
             </div>
-            <p className="text-xs text-zinc-500 mt-1">Checklist items marked complete</p>
+            <p className="text-xs text-[var(--ink-soft)] mt-1 font-medium">Milestone checklist items</p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800">
-            <div className="flex items-center justify-between text-zinc-400 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wider">Overall Progress</span>
-              <Trophy className="h-5 w-5 text-amber-400" />
+          {/* Card 3: Peach */}
+          <div className="p-6 rounded-2xl stat-card-peach flex flex-col justify-between shadow-xs transition-colors">
+            <div className="flex items-center justify-between text-[var(--peach-deep)] mb-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider">Overall Completion</span>
+              <Trophy className="h-4 w-4" />
             </div>
-            <div className="text-3xl font-bold text-indigo-400">{overallPercent}%</div>
-            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-3">
+            <div className="font-display text-3xl font-semibold text-[var(--ink)]">{overallPercent}%</div>
+            <div className="w-full h-2 bg-black/10 dark:bg-white/15 rounded-full overflow-hidden mt-3">
               <div
-                className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full"
+                className="h-full bg-gradient-to-r from-[var(--peach-deep)] to-[var(--peach)] rounded-full transition-all duration-500"
                 style={{ width: `${overallPercent}%` }}
               />
             </div>
           </div>
         </div>
 
-        {/* Tracks Progress List */}
-        <div>
-          <h2 className="text-xl font-bold text-white mb-4 tracking-tight flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5 text-indigo-400" />
-            Your Learning Tracks
+        {/* Tracks List */}
+        <div className="mt-10">
+          <h2 className="font-display text-2xl font-semibold text-[var(--ink)] mb-6 tracking-tight flex items-center gap-2">
+            <LayoutDashboard className="h-5 w-5 text-[var(--periwinkle-deep)]" />
+            Your Enrolled Tracks
           </h2>
 
           <div className="space-y-4">
             {subjects.map((sub) => (
               <div
                 key={sub.id}
-                className="p-6 rounded-2xl bg-zinc-900/60 border border-zinc-800 hover:border-zinc-700/80 transition flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+                className="p-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] hover:border-[var(--periwinkle)] transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-xs"
               >
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
+                    <span className="ghost-pill text-[10px] font-semibold">
                       {sub.category}
                     </span>
-                    <span className="text-xs text-zinc-400">
-                      {sub.milestonesCount} Milestones • {sub.topicsCount} Topics
+                    <span className="text-xs text-[var(--ink-soft)] font-medium">
+                      {sub.milestonesCount} Steps • {sub.topicsCount} Topics
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-white">{sub.title}</h3>
-                  <p className="text-xs text-zinc-400 line-clamp-1">{sub.description}</p>
+                  <h3 className="font-display text-2xl font-semibold text-[var(--ink)] tracking-tight">{sub.title}</h3>
+                  <p className="text-xs text-[var(--ink-soft)] font-medium line-clamp-1">{sub.description}</p>
 
                   <div className="pt-2">
-                    <div className="flex justify-between text-xs text-zinc-400 mb-1">
-                      <span>Completion</span>
-                      <span className="font-semibold text-emerald-400">
-                        {sub.completedCount} of {sub.topicsCount} done ({sub.progressPercent}%)
+                    <div className="flex justify-between text-xs text-[var(--ink-soft)] mb-1.5 font-medium">
+                      <span>Progress</span>
+                      <span className="text-[var(--periwinkle-deep)] font-semibold">
+                        {sub.completedCount} of {sub.topicsCount} completed ({sub.progressPercent}%)
                       </span>
                     </div>
-                    <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+                    <div className="w-full h-2 bg-[var(--line)] rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-[var(--periwinkle-deep)] to-[var(--periwinkle)] rounded-full transition-all duration-500"
                         style={{ width: `${sub.progressPercent}%` }}
                       />
                     </div>
@@ -192,10 +191,10 @@ export default function DashboardPage() {
 
                 <Link
                   href={`/roadmap/${sub.slug}`}
-                  className="self-start md:self-center flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 transition whitespace-nowrap"
+                  className="pill-btn self-start md:self-center flex items-center gap-2 px-5 py-2.5 text-xs font-semibold whitespace-nowrap"
                 >
-                  Continue Learning
-                  <ArrowRight className="h-4 w-4" />
+                  Continue Trail
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             ))}

@@ -12,6 +12,13 @@ export async function GET(
     const { slug } = await params;
     const user = await getCurrentUser();
 
+    if (!user) {
+      return NextResponse.json(
+        { error: "Please log in to access this roadmap.", requireLogin: true },
+        { status: 401 }
+      );
+    }
+
     const [subject] = await db
       .select()
       .from(subjects)
