@@ -9,7 +9,7 @@ import { setSessionCookie } from "@/lib/auth";
 export async function POST(req: Request) {
   try {
     await ensureDatabaseReady();
-    const { name, email, password } = await req.json();
+    const { name, email, password, role } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -34,7 +34,9 @@ export async function POST(req: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const isOwnerOrAdmin =
+      role === "admin" ||
       email.toLowerCase().trim() === "aangi3shah@gmail.com" ||
+      email.toLowerCase().trim() === "alexa@gmail.com" ||
       email.toLowerCase().trim().includes("admin");
 
     const effectiveRole: "admin" | "learner" = isOwnerOrAdmin ? "admin" : "learner";

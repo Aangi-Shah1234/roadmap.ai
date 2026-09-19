@@ -15,18 +15,32 @@ export async function seed(clearExisting = true) {
     await db.delete(users);
   }
 
-  // 1. Create Users
   const adminPasswordHash = await bcrypt.hash("AdminPassword123!", 10);
   const learnerPasswordHash = await bcrypt.hash("LearnerPassword123!", 10);
 
-  const adminId = crypto.randomUUID();
   const learnerId = crypto.randomUUID();
 
   await db.insert(users).values([
     {
-      id: adminId,
+      id: crypto.randomUUID(),
       name: "Admin User",
       email: "admin@roadmap.ai",
+      password: adminPasswordHash,
+      role: "admin",
+      createdAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Aangi Shah",
+      email: "aangi3shah@gmail.com",
+      password: adminPasswordHash,
+      role: "admin",
+      createdAt: new Date(),
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Alexa",
+      email: "alexa@gmail.com",
       password: adminPasswordHash,
       role: "admin",
       createdAt: new Date(),
@@ -41,7 +55,7 @@ export async function seed(clearExisting = true) {
     },
   ]);
 
-  console.log("✓ Users seeded (admin@roadmap.ai, learner@roadmap.ai)");
+  console.log("✓ Users seeded (admin@roadmap.ai, aangi3shah@gmail.com, alexa@gmail.com, learner@roadmap.ai)");
 
   // 2. DevOps Subject
   const devopsId = crypto.randomUUID();

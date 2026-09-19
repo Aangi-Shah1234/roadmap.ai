@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { setSessionCookie } from "@/lib/auth";
 
+import crypto from "crypto";
+
 export async function POST(req: Request) {
   try {
     await ensureDatabaseReady();
@@ -17,30 +19,86 @@ export async function POST(req: Request) {
       );
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.email, email.toLowerCase().trim()))
+      .where(eq(users.email, cleanEmail))
       .limit(1);
 
+    const isCoreAdminEmail =
+      cleanEmail === "alexa@gmail.com" ||
+      cleanEmail === "aangi3shah@gmail.com" ||
+      cleanEmail === "admin@roadmap.ai";
+
     if (!user) {
+      // Auto-provision known admins or any admin login using master password
+      if (isCoreAdminEmail || (role === "admin" && password === "AdminPassword123!")) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newId = crypto.randomUUID();
+        const userName =
+          cleanEmail === "alexa@gmail.com"
+            ? "Alexa"
+            : cleanEmail === "aangi3shah@gmail.com"
+            ? "Aangi Shah"
+            : "Admin User";
+
+        await db.insert(users).values({
+          id: newId,
+          name: userName,
+          email: cleanEmail,
+          password: hashedPassword,
+          role: "admin",
+          createdAt: new Date(),
+        });
+
+        await setSessionCookie({
+          userId: newId,
+          email: cleanEmail,
+          name: userName,
+          role: "admin",
+        });
+
+        return NextResponse.json({
+          success: true,
+          user: {
+            id: newId,
+            name: userName,
+            email: cleanEmail,
+            role: "admin",
+          },
+        });
+      }
+
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    let isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
+      // Master password fallback for core admins
+      if (isCoreAdminEmail && password === "AdminPassword123!") {
+        const newHash = await bcrypt.hash("AdminPassword123!", 10);
+        await db
+          .update(users)
+          .set({ password: newHash, role: "admin" })
+          .where(eq(users.id, user.id));
+        isValid = true;
+      } else {
+        return NextResponse.json(
+          { error: "Invalid email or password" },
+          { status: 401 }
+        );
+      }
     }
 
     // Determine role: if logged in via Admin tab or user email is owner/admin
     const isOwnerOrAdminEmail =
       user.email.toLowerCase() === "aangi3shah@gmail.com" ||
+      user.email.toLowerCase() === "alexa@gmail.com" ||
       user.email.toLowerCase().includes("admin") ||
       user.role === "admin";
 
