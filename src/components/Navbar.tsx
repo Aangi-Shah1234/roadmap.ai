@@ -126,7 +126,19 @@ export default function Navbar() {
           <div className="h-9 w-24 bg-[var(--bg-alt)] animate-pulse rounded-full" />
         ) : user ? (
           <div className="flex items-center gap-2.5">
-            <span className="ghost-pill hidden sm:inline-flex">{user.name}</span>
+            <span className="ghost-pill hidden sm:inline-flex items-center gap-1">
+              {user.name}
+              {user.role === "admin" && <ShieldCheck className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />}
+            </span>
+            {user.role === "admin" && (
+              <Link
+                href="/admin"
+                className="ghost-pill inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--periwinkle-deep)] hover:text-[var(--ink)]"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Admin
+              </Link>
+            )}
             <Link href="/dashboard" className="pill-btn">
               Dashboard
             </Link>

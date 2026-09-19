@@ -11,6 +11,7 @@ import {
   ArrowRight,
   Layers,
   LayoutDashboard,
+  ShieldCheck,
 } from "lucide-react";
 
 interface SubjectProgress {
@@ -87,24 +88,44 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[var(--line)]">
           <div>
-            <span className="ghost-pill mb-2 inline-flex text-[11px] font-semibold">
-              Learner Profile
+            <span className="ghost-pill mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold">
+              {user.role === "admin" ? (
+                <>
+                  <ShieldCheck className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />
+                  <span className="text-[var(--periwinkle-deep)] font-bold">Administrator Studio</span>
+                </>
+              ) : (
+                "Learner Profile"
+              )}
             </span>
             <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[var(--ink)] tracking-tight mt-2">
               Welcome back, {user.name} 👋
             </h1>
             <p className="text-xs sm:text-sm text-[var(--ink-soft)] mt-1 font-medium">
-              Track your milestones, review learned concepts, and keep progressing.
+              {user.role === "admin"
+                ? "Manage learning tracks, sequential milestones, and track learner progress."
+                : "Track your milestones, review learned concepts, and keep progressing."}
             </p>
           </div>
 
-          <Link
-            href="/"
-            className="pill-btn self-start sm:self-auto inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold"
-          >
-            Explore Tracks
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+            {user.role === "admin" && (
+              <Link
+                href="/admin"
+                className="pill-btn inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold"
+              >
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Admin Studio
+              </Link>
+            )}
+            <Link
+              href="/"
+              className="ghost-pill inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold hover:text-[var(--ink)]"
+            >
+              Explore Tracks
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
 
         {/* 3 Pastel Stats Cards */}

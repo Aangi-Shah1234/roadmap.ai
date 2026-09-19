@@ -33,12 +33,20 @@ export async function POST(req: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const isOwnerOrAdmin =
+      email.toLowerCase().trim() === "aangi3shah@gmail.com" ||
+      email.toLowerCase().trim().includes("admin");
+
+    const effectiveRole: "admin" | "learner" = isOwnerOrAdmin ? "admin" : "learner";
+
     if (existingUser.length > 0) {
+      const userRole = isOwnerOrAdmin ? "admin" : (existingUser[0].role as "admin" | "learner");
       await db
         .update(users)
         .set({
           name: name.trim() || existingUser[0].name,
           password: hashedPassword,
+          role: userRole,
         })
         .where(eq(users.id, existingUser[0].id));
 
@@ -46,7 +54,7 @@ export async function POST(req: Request) {
         userId: existingUser[0].id,
         email: existingUser[0].email,
         name: name.trim() || existingUser[0].name,
-        role: existingUser[0].role as "admin" | "learner",
+        role: userRole,
       });
 
       return NextResponse.json({
@@ -55,7 +63,7 @@ export async function POST(req: Request) {
           id: existingUser[0].id,
           name: name.trim() || existingUser[0].name,
           email: existingUser[0].email,
-          role: existingUser[0].role,
+          role: userRole,
         },
       });
     }
@@ -67,7 +75,7 @@ export async function POST(req: Request) {
       name: name.trim(),
       email: email.toLowerCase().trim(),
       password: hashedPassword,
-      role: "learner",
+      role: effectiveRole,
       createdAt: new Date(),
     });
 
@@ -75,12 +83,12 @@ export async function POST(req: Request) {
       userId,
       email: email.toLowerCase().trim(),
       name: name.trim(),
-      role: "learner",
+      role: effectiveRole,
     });
 
     return NextResponse.json({
       success: true,
-      user: { id: userId, name, email, role: "learner" },
+      user: { id: userId, name, email, role: effectiveRole },
     });
   } catch (err: any) {
     console.error("Register error:", err);

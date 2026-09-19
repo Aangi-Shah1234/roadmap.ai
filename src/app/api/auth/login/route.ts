@@ -8,7 +8,7 @@ import { setSessionCookie } from "@/lib/auth";
 export async function POST(req: Request) {
   try {
     await ensureDatabaseReady();
-    const { email, password } = await req.json();
+    const { email, password, role } = await req.json();
 
     if (!email || !password) {
       return NextResponse.json(
@@ -38,11 +38,27 @@ export async function POST(req: Request) {
       );
     }
 
+    // Determine role: if logged in via Admin tab or user email is owner/admin
+    const isOwnerOrAdminEmail =
+      user.email.toLowerCase() === "aangi3shah@gmail.com" ||
+      user.email.toLowerCase().includes("admin") ||
+      user.role === "admin";
+
+    const effectiveRole: "admin" | "learner" =
+      role === "admin" || isOwnerOrAdminEmail ? "admin" : "learner";
+
+    if (user.role !== effectiveRole) {
+      await db
+        .update(users)
+        .set({ role: effectiveRole })
+        .where(eq(users.id, user.id));
+    }
+
     await setSessionCookie({
       userId: user.id,
       email: user.email,
       name: user.name,
-      role: user.role as "admin" | "learner",
+      role: effectiveRole,
     });
 
     return NextResponse.json({
@@ -51,7 +67,7 @@ export async function POST(req: Request) {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: effectiveRole,
       },
     });
   } catch (err: any) {
