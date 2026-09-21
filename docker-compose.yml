@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   roadmap-ai:
     build:
@@ -12,8 +10,10 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:roadmap.db
-      - JWT_SECRET=roadmap-ai-docker-secret-key-2026
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - DATABASE_URL=file:/app/data/roadmap.db
+      - JWT_SECRET=roadmap-ai-docker-production-secret-2026
     volumes:
       - roadmap-data:/app/data
 
