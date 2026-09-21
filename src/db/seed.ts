@@ -1,10 +1,13 @@
-import { db } from "./index";
+import { db, createTablesIfNotExist } from "./index";
 import { users, subjects, milestones, topics, userProgress } from "./schema";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 export async function seed(clearExisting = true) {
   console.log("🌱 Seeding database...");
+
+  // Ensure all tables are created first
+  await createTablesIfNotExist();
 
   if (clearExisting) {
     // Clear existing data in reverse order of foreign keys
