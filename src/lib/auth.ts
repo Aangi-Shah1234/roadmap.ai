@@ -46,7 +46,7 @@ export async function setSessionCookie(payload: SessionPayload): Promise<string>
   const cookieStore = await cookies();
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: false, // Must be false to support HTTP IP addresses (e.g. EC2 http://100.59.9.255)
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days

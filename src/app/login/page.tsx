@@ -45,11 +45,10 @@ function LoginForm() {
       if (!res.ok) throw new Error(data.error || "Login failed");
 
       if (data.user?.role === "admin" || role === "admin") {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
-      router.refresh();
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     } finally {

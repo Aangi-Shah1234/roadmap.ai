@@ -43,11 +43,10 @@ function RegisterForm() {
 
       // Direct admin registration straight to Admin Studio, learner to Dashboard
       if (data.user?.role === "admin" || role === "admin") {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
-      router.refresh();
     } catch (err: any) {
       setError(err.message || "Failed to create account");
     } finally {
