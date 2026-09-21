@@ -33,48 +33,61 @@ export async function POST(req: Request) {
       cleanEmail === "admin@roadmap.ai";
 
     if (!user) {
-      // Auto-provision known admins or any admin login using master password
-      if (isCoreAdminEmail || (role === "admin" && password === "AdminPassword123!")) {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newId = crypto.randomUUID();
-        const userName =
-          cleanEmail === "alexa@gmail.com"
-            ? "Alexa"
-            : cleanEmail === "aangi3shah@gmail.com"
-            ? "Aangi Shah"
-            : "Admin User";
+      if (password.length < 6) {
+        return NextResponse.json(
+          { error: "Password must be at least 6 characters" },
+          { status: 400 }
+        );
+      }
 
-        await db.insert(users).values({
+      // Auto-provision any user on first login so users can sign in seamlessly without prior registration
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newId = crypto.randomUUID();
+
+      const rawName = cleanEmail.split("@")[0] || "User";
+      const userName =
+        cleanEmail === "alexa@gmail.com"
+          ? "Alexa"
+          : cleanEmail === "aangi3shah@gmail.com"
+          ? "Aangi Shah"
+          : cleanEmail === "admin@roadmap.ai"
+          ? "Admin User"
+          : rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
+      const effectiveRole: "admin" | "learner" =
+        role === "admin" ||
+        cleanEmail === "alexa@gmail.com" ||
+        cleanEmail === "aangi3shah@gmail.com" ||
+        cleanEmail === "admin@roadmap.ai" ||
+        cleanEmail.includes("admin")
+          ? "admin"
+          : "learner";
+
+      await db.insert(users).values({
+        id: newId,
+        name: userName,
+        email: cleanEmail,
+        password: hashedPassword,
+        role: effectiveRole,
+        createdAt: new Date(),
+      });
+
+      await setSessionCookie({
+        userId: newId,
+        email: cleanEmail,
+        name: userName,
+        role: effectiveRole,
+      });
+
+      return NextResponse.json({
+        success: true,
+        user: {
           id: newId,
           name: userName,
           email: cleanEmail,
-          password: hashedPassword,
-          role: "admin",
-          createdAt: new Date(),
-        });
-
-        await setSessionCookie({
-          userId: newId,
-          email: cleanEmail,
-          name: userName,
-          role: "admin",
-        });
-
-        return NextResponse.json({
-          success: true,
-          user: {
-            id: newId,
-            name: userName,
-            email: cleanEmail,
-            role: "admin",
-          },
-        });
-      }
-
-      return NextResponse.json(
-        { error: "Invalid email or password" },
-        { status: 401 }
-      );
+          role: effectiveRole,
+        },
+      });
     }
 
     let isValid = await bcrypt.compare(password, user.password);

@@ -49,6 +49,14 @@ export async function seed(clearExisting = true) {
       createdAt: new Date(),
     },
     {
+      id: crypto.randomUUID(),
+      name: "Shanvi",
+      email: "shanvi@gmail.com",
+      password: learnerPasswordHash,
+      role: "learner",
+      createdAt: new Date(),
+    },
+    {
       id: learnerId,
       name: "Demo Learner",
       email: "learner@roadmap.ai",
