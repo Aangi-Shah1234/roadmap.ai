@@ -154,7 +154,9 @@ export default function HomePage() {
       <section className="strip">
         <div className="strip-grid">
           <div className="strip-card">
-            <div className="icon">🌿</div>
+            <div className="icon">
+              <Users className="h-5 w-5 text-[var(--sage-deep)]" />
+            </div>
             <h3>Join the community</h3>
             <p>
               Connect with other developers walking the same trail, trade notes,
@@ -162,7 +164,9 @@ export default function HomePage() {
             </p>
           </div>
           <div className="strip-card">
-            <div className="icon">🧭</div>
+            <div className="icon">
+              <Compass className="h-5 w-5 text-[var(--periwinkle-deep)]" />
+            </div>
             <h3>Interactive trails</h3>
             <p>
               A step navigator with automatic layout — no zooming or dragging
@@ -170,7 +174,9 @@ export default function HomePage() {
             </p>
           </div>
           <div className="strip-card">
-            <div className="icon">🍑</div>
+            <div className="icon">
+              <Layers className="h-5 w-5 text-[var(--peach-deep)]" />
+            </div>
             <h3>Whole IT spectrum</h3>
             <p>
               8 structured career tracks across Software Engineering, DevOps, Cloud, AI/ML, Security, and Architecture.

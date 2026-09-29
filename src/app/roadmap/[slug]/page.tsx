@@ -4,7 +4,17 @@ import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import CertificateModal from "@/components/CertificateModal";
-import { Lock, ArrowRight, ExternalLink, Award } from "lucide-react";
+import {
+  Lock,
+  ArrowRight,
+  ExternalLink,
+  Award,
+  Clock,
+  AlertCircle,
+  FileText,
+  Terminal,
+  Play,
+} from "lucide-react";
 import { getLessonContent, LessonData } from "@/lib/lessons";
 
 interface TopicResource {
@@ -50,8 +60,50 @@ interface RoadmapData {
   currentUser: {
     userId: string;
     name: string;
+    email?: string;
     role: "admin" | "learner";
   } | null;
+}
+
+const LOCAL_PROGRESS_KEY = "roadmap_local_progress_v1";
+
+function getLocalProgress(userKey: string): { added: string[]; removed: string[] } {
+  if (typeof window === "undefined") return { added: [], removed: [] };
+  try {
+    const raw = localStorage.getItem(LOCAL_PROGRESS_KEY);
+    if (!raw) return { added: [], removed: [] };
+    const parsed = JSON.parse(raw);
+    return parsed[userKey] || { added: [], removed: [] };
+  } catch {
+    return { added: [], removed: [] };
+  }
+}
+
+function setLocalProgress(userKey: string, topicId: string, completed: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = localStorage.getItem(LOCAL_PROGRESS_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const current = parsed[userKey] || { added: [], removed: [] };
+    const addedSet = new Set<string>(current.added || []);
+    const removedSet = new Set<string>(current.removed || []);
+
+    if (completed) {
+      addedSet.add(topicId);
+      removedSet.delete(topicId);
+    } else {
+      addedSet.delete(topicId);
+      removedSet.add(topicId);
+    }
+
+    parsed[userKey] = {
+      added: Array.from(addedSet),
+      removed: Array.from(removedSet),
+    };
+    localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(parsed));
+  } catch {
+    // ignore storage errors
+  }
 }
 
 export default function RoadmapPage({
@@ -72,9 +124,47 @@ export default function RoadmapPage({
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
   const [showCertModal, setShowCertModal] = useState(false);
 
+  const applyLocalProgressToData = (raw: RoadmapData): RoadmapData => {
+    const userKey = raw.currentUser?.email || raw.currentUser?.userId || "default";
+    const local = getLocalProgress(userKey);
+    if (local.added.length === 0 && local.removed.length === 0) return raw;
+
+    const addedSet = new Set(local.added);
+    const removedSet = new Set(local.removed);
+
+    const updatedMilestones = raw.milestones.map((m) => {
+      const updatedTopics = (m.topics || []).map((t) => {
+        let isCompleted = t.isCompleted;
+        if (addedSet.has(t.id)) isCompleted = true;
+        if (removedSet.has(t.id)) isCompleted = false;
+        return { ...t, isCompleted };
+      });
+      const isCompleted =
+        updatedTopics.length > 0 && updatedTopics.every((t) => t.isCompleted);
+      return { ...m, topics: updatedTopics, isCompleted };
+    });
+
+    const allTopics = updatedMilestones.flatMap((m) => m.topics);
+    const totalTopics = allTopics.length;
+    const completedCount = allTopics.filter((t) => t.isCompleted).length;
+    const progressPercent =
+      totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
+
+    return {
+      ...raw,
+      milestones: updatedMilestones,
+      stats: {
+        ...raw.stats,
+        totalTopics,
+        completedCount,
+        progressPercent,
+      },
+    };
+  };
+
   const fetchRoadmap = async () => {
     try {
-      const res = await fetch(`/api/roadmaps/${slug}`);
+      const res = await fetch(`/api/roadmaps/${slug}`, { cache: "no-store" });
       const json = await res.json();
 
       if (res.status === 401 || json.requireLogin) {
@@ -84,7 +174,7 @@ export default function RoadmapPage({
       }
 
       if (!res.ok) throw new Error(json.error || "Roadmap not found");
-      setData(json);
+      setData(applyLocalProgressToData(json));
     } catch (err: any) {
       setError(err.message || "Failed to load roadmap");
     } finally {
@@ -97,16 +187,46 @@ export default function RoadmapPage({
   }, [slug]);
 
   const handleToggleComplete = async (topicId: string, newState: boolean) => {
+    const userKey = data?.currentUser?.email || data?.currentUser?.userId || "default";
+    setLocalProgress(userKey, topicId, newState);
+
+    // 1. Instant optimistic UI update
+    setData((prev) => {
+      if (!prev) return prev;
+      const updatedMilestones = prev.milestones.map((m) => {
+        const updatedTopics = (m.topics || []).map((t) =>
+          t.id === topicId ? { ...t, isCompleted: newState } : t
+        );
+        const isCompleted =
+          updatedTopics.length > 0 && updatedTopics.every((t) => t.isCompleted);
+        return { ...m, topics: updatedTopics, isCompleted };
+      });
+
+      const allTopics = updatedMilestones.flatMap((m) => m.topics);
+      const totalTopics = allTopics.length;
+      const completedCount = allTopics.filter((t) => t.isCompleted).length;
+      const progressPercent =
+        totalTopics > 0 ? Math.round((completedCount / totalTopics) * 100) : 0;
+
+      return {
+        ...prev,
+        milestones: updatedMilestones,
+        stats: {
+          ...prev.stats,
+          totalTopics,
+          completedCount,
+          progressPercent,
+        },
+      };
+    });
+
+    // 2. Persist to server (cookie + SQLite)
     try {
-      const res = await fetch("/api/progress", {
+      await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topicId, completed: newState }),
       });
-
-      if (res.ok) {
-        await fetchRoadmap();
-      }
     } catch (err) {
       console.error("Failed to toggle progress", err);
     }
@@ -267,7 +387,10 @@ export default function RoadmapPage({
               Concept {currentTopicIndex + 1} of {allMilestoneTopics.length}
             </span>
             <span className="step-level">{currentMilestone.level}</span>
-            <span className="time-est">🕐 {lesson.timeEst}</span>
+            <span className="time-est inline-flex items-center gap-1">
+              <Clock className="h-3.5 w-3.5" />
+              {lesson.timeEst}
+            </span>
           </div>
           <h1 className="lesson-title">{currentTopic.title}</h1>
           <p className="lesson-intro">{lesson.intro}</p>
@@ -294,7 +417,7 @@ export default function RoadmapPage({
 
               {/* Callout */}
               <div className="callout">
-                <span className="emoji">{lesson.callout.emoji}</span>
+                <AlertCircle className="h-4 w-4 text-[var(--peach-deep)] shrink-0 mt-0.5" />
                 <p>
                   <strong>{lesson.callout.strong}</strong> {lesson.callout.text}
                 </p>
@@ -319,7 +442,13 @@ export default function RoadmapPage({
                           r.type === "video" ? "video" : r.type === "doc" ? "doc" : ""
                         }`}
                       >
-                        {r.type === "video" ? "▶" : r.type === "tutorial" ? "💻" : "📄"}
+                        {r.type === "video" ? (
+                          <Play className="h-3.5 w-3.5" />
+                        ) : r.type === "tutorial" ? (
+                          <Terminal className="h-3.5 w-3.5" />
+                        ) : (
+                          <FileText className="h-3.5 w-3.5" />
+                        )}
                       </span>
                       <span className="truncate group-hover:text-[var(--periwinkle-deep)]">
                         {r.title}
@@ -335,10 +464,11 @@ export default function RoadmapPage({
 
               {/* Mark Done Button */}
               <button
+                type="button"
                 onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
-                className={`mark-done-btn ${currentTopic.isCompleted ? "completed" : ""}`}
+                className={`mark-done-btn cursor-pointer ${currentTopic.isCompleted ? "completed" : ""}`}
               >
-                {currentTopic.isCompleted ? "Completed ✓ (Click to undo)" : "Mark as complete ✓"}
+                {currentTopic.isCompleted ? "Completed (Click to undo)" : "Mark as complete"}
               </button>
 
               {/* Up Next Card */}

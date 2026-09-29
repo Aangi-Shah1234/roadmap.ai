@@ -209,7 +209,7 @@ export default function CertificateModal({
   };
 
   const handleCopyShareText = () => {
-    const shareText = `🎓 Excited to share my "${trackTitle}" credential on Roadmap.ai!\n\n✅ Track: ${trackTitle} (${milestonesCount} Milestones • ${topicsCount} Engineering Topics)\n🆔 Credential ID: ${certId}\n🔗 Explore the interactive platform: https://roadmap-ai-steel.vercel.app\n\n#DevOps #CloudEngineering #FullStack #SoftwareEngineering #RoadmapAI`;
+    const shareText = `Completed the "${trackTitle}" engineering pathway on Roadmap.ai!\n\nTrack: ${trackTitle} (${milestonesCount} Milestones • ${topicsCount} Engineering Topics)\nCredential ID: ${certId}\nExplore the platform: https://roadmap-ai-steel.vercel.app\n\n#DevOps #CloudEngineering #FullStack #SoftwareEngineering #RoadmapAI`;
     navigator.clipboard.writeText(shareText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);

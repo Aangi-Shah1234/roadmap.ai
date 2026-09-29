@@ -21,11 +21,11 @@ export async function seed(clearExisting = true) {
   const adminPasswordHash = await bcrypt.hash("AdminPassword123!", 10);
   const learnerPasswordHash = await bcrypt.hash("LearnerPassword123!", 10);
 
-  const learnerId = crypto.randomUUID();
+  const learnerId = "user-learner";
 
   await db.insert(users).values([
     {
-      id: crypto.randomUUID(),
+      id: "user-admin",
       name: "Admin User",
       email: "admin@roadmap.ai",
       password: adminPasswordHash,
@@ -33,7 +33,7 @@ export async function seed(clearExisting = true) {
       createdAt: new Date(),
     },
     {
-      id: crypto.randomUUID(),
+      id: "user-aangi",
       name: "Aangi Shah",
       email: "aangi3shah@gmail.com",
       password: adminPasswordHash,
@@ -41,7 +41,7 @@ export async function seed(clearExisting = true) {
       createdAt: new Date(),
     },
     {
-      id: crypto.randomUUID(),
+      id: "user-alexa",
       name: "Alexa",
       email: "alexa@gmail.com",
       password: adminPasswordHash,
@@ -49,7 +49,7 @@ export async function seed(clearExisting = true) {
       createdAt: new Date(),
     },
     {
-      id: crypto.randomUUID(),
+      id: "user-shanvi",
       name: "Shanvi",
       email: "shanvi@gmail.com",
       password: learnerPasswordHash,
@@ -69,7 +69,7 @@ export async function seed(clearExisting = true) {
   console.log("✓ Users seeded (admin@roadmap.ai, aangi3shah@gmail.com, alexa@gmail.com, learner@roadmap.ai)");
 
   // 2. DevOps Subject
-  const devopsId = crypto.randomUUID();
+  const devopsId = "subj-devops";
   await db.insert(subjects).values({
     id: devopsId,
     title: "DevOps Engineering",
@@ -264,7 +264,7 @@ export async function seed(clearExisting = true) {
 
   for (let mIndex = 0; mIndex < devopsMilestonesData.length; mIndex++) {
     const mData = devopsMilestonesData[mIndex];
-    const milestoneId = crypto.randomUUID();
+    const milestoneId = `ms-devops-${mIndex + 1}`;
 
     await db.insert(milestones).values({
       id: milestoneId,
@@ -278,7 +278,7 @@ export async function seed(clearExisting = true) {
 
     for (let tIndex = 0; tIndex < mData.topics.length; tIndex++) {
       const tData = mData.topics[tIndex];
-      const topicId = crypto.randomUUID();
+      const topicId = `devops-${mIndex + 1}-${tIndex + 1}`;
       if (!firstTopicIdForProgress) firstTopicIdForProgress = topicId;
 
       await db.insert(topics).values({
@@ -294,7 +294,7 @@ export async function seed(clearExisting = true) {
   }
 
   // 3. Cloud Engineering Subject
-  const cloudId = crypto.randomUUID();
+  const cloudId = "subj-cloud";
   await db.insert(subjects).values({
     id: cloudId,
     title: "Cloud Engineering (AWS)",
@@ -387,7 +387,7 @@ export async function seed(clearExisting = true) {
 
   for (let mIndex = 0; mIndex < cloudMilestonesData.length; mIndex++) {
     const mData = cloudMilestonesData[mIndex];
-    const milestoneId = crypto.randomUUID();
+    const milestoneId = `ms-cloud-${mIndex + 1}`;
 
     await db.insert(milestones).values({
       id: milestoneId,
@@ -401,7 +401,7 @@ export async function seed(clearExisting = true) {
 
     for (let tIndex = 0; tIndex < mData.topics.length; tIndex++) {
       const tData = mData.topics[tIndex];
-      const topicId = crypto.randomUUID();
+      const topicId = `cloud-${mIndex + 1}-${tIndex + 1}`;
 
       await db.insert(topics).values({
         id: topicId,
@@ -433,7 +433,7 @@ export async function seed(clearExisting = true) {
       }[];
     }[];
   }) {
-    const subjId = crypto.randomUUID();
+    const subjId = `subj-${track.slug}`;
     await db.insert(subjects).values({
       id: subjId,
       title: track.title,
@@ -446,7 +446,7 @@ export async function seed(clearExisting = true) {
 
     for (let mIdx = 0; mIdx < track.milestones.length; mIdx++) {
       const m = track.milestones[mIdx];
-      const mId = crypto.randomUUID();
+      const mId = `ms-${track.slug}-${mIdx + 1}`;
       await db.insert(milestones).values({
         id: mId,
         subjectId: subjId,
@@ -460,7 +460,7 @@ export async function seed(clearExisting = true) {
       for (let tIdx = 0; tIdx < m.topics.length; tIdx++) {
         const t = m.topics[tIdx];
         await db.insert(topics).values({
-          id: crypto.randomUUID(),
+          id: `${track.slug}-${mIdx + 1}-${tIdx + 1}`,
           milestoneId: mId,
           title: t.title,
           description: t.description,
@@ -1120,7 +1120,7 @@ export async function seed(clearExisting = true) {
   // Pre-seed 1 completed topic for the demo learner so progress bars show up
   if (firstTopicIdForProgress) {
     await db.insert(userProgress).values({
-      id: crypto.randomUUID(),
+      id: "prog-learner-init",
       userId: learnerId,
       topicId: firstTopicIdForProgress,
       completed: 1,

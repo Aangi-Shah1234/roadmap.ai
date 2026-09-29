@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { db, ensureDatabaseReady } from "@/db";
-import { subjects, milestones, topics, userProgress } from "@/db/schema";
+import { users, subjects, milestones, topics, userProgress } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getCookieProgress } from "@/lib/auth";
 
 export async function GET(
   req: Request,
@@ -38,13 +38,33 @@ export async function GET(
 
     let completedTopicIds: string[] = [];
     if (user) {
+      const [dbUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, user.email.toLowerCase().trim()))
+        .limit(1);
+
+      const effectiveUserId = dbUser ? dbUser.id : user.userId;
+
       const progress = await db
         .select()
         .from(userProgress)
-        .where(eq(userProgress.userId, user.userId));
-      completedTopicIds = progress
-        .filter((p) => p.completed === 1)
-        .map((p) => p.topicId);
+        .where(eq(userProgress.userId, effectiveUserId));
+
+      const completedSet = new Set<string>(
+        progress.filter((p) => p.completed === 1).map((p) => p.topicId)
+      );
+
+      // Merge cross-container cookie progress
+      const cookieProgress = await getCookieProgress(user.email);
+      for (const addedId of cookieProgress.added) {
+        completedSet.add(addedId);
+      }
+      for (const removedId of cookieProgress.removed) {
+        completedSet.delete(removedId);
+      }
+
+      completedTopicIds = Array.from(completedSet);
     }
 
     const enrichedMilestones = await Promise.all(

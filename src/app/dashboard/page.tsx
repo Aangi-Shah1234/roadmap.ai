@@ -28,6 +28,8 @@ interface SubjectProgress {
   topicsCount: number;
   completedCount: number;
   progressPercent: number;
+  topicIds?: string[];
+  completedTopicIds?: string[];
 }
 
 interface UserInfo {
@@ -45,7 +47,7 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    fetch("/api/auth/me", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (!data.user) {
@@ -53,11 +55,47 @@ export default function DashboardPage() {
           return;
         }
         setUser(data.user);
+        const userKey = data.user.email || data.user.userId || "default";
 
-        fetch("/api/subjects")
+        fetch("/api/subjects", { cache: "no-store" })
           .then((res) => res.json())
           .then((subData) => {
-            if (subData.subjects) setSubjects(subData.subjects);
+            if (subData.subjects) {
+              let localAdded = new Set<string>();
+              let localRemoved = new Set<string>();
+              try {
+                const raw = localStorage.getItem("roadmap_local_progress_v1");
+                if (raw) {
+                  const parsed = JSON.parse(raw);
+                  const entry = parsed[userKey];
+                  if (entry) {
+                    localAdded = new Set(entry.added || []);
+                    localRemoved = new Set(entry.removed || []);
+                  }
+                }
+              } catch {
+                // ignore
+              }
+
+              const mergedSubjects = (subData.subjects as SubjectProgress[]).map((s) => {
+                if (!s.topicIds || s.topicIds.length === 0) return s;
+                const set = new Set(s.completedTopicIds || []);
+                for (const tId of s.topicIds) {
+                  if (localAdded.has(tId)) set.add(tId);
+                  if (localRemoved.has(tId)) set.delete(tId);
+                }
+                const completedCount = set.size;
+                const progressPercent =
+                  s.topicsCount > 0 ? Math.round((completedCount / s.topicsCount) * 100) : 0;
+                return {
+                  ...s,
+                  completedCount,
+                  progressPercent,
+                };
+              });
+
+              setSubjects(mergedSubjects);
+            }
             setLoading(false);
           });
       })

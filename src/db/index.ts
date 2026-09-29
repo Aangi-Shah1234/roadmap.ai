@@ -86,12 +86,14 @@ export async function ensureDatabaseReady() {
       try {
         await createTablesIfNotExist();
 
-        // Check if database has content
-        const check = await client.execute("SELECT count(*) as cnt FROM subjects;");
+        // Check if database has deterministic seeded content
+        const check = await client.execute(
+          "SELECT count(*) as cnt FROM subjects WHERE id = 'subj-devops';"
+        );
         const count = Number(check.rows[0]?.cnt || 0);
         if (count === 0) {
           const { seed } = await import("./seed");
-          await seed(false);
+          await seed(true);
         }
       } catch (err) {
         console.error("Auto-init database error:", err);

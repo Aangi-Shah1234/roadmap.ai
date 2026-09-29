@@ -1,14 +1,41 @@
 import { NextResponse } from "next/server";
 import { db, ensureDatabaseReady } from "@/db";
-import { subjects, milestones, topics, userProgress } from "@/db/schema";
+import { users, subjects, milestones, topics, userProgress } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getCookieProgress } from "@/lib/auth";
 
 export async function GET() {
   try {
     await ensureDatabaseReady();
     const user = await getCurrentUser();
     const allSubjects = await db.select().from(subjects);
+
+    const completedSet = new Set<string>();
+    if (user) {
+      const [dbUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, user.email.toLowerCase().trim()))
+        .limit(1);
+      const effectiveUserId = dbUser ? dbUser.id : user.userId;
+
+      const userCompleted = await db
+        .select()
+        .from(userProgress)
+        .where(eq(userProgress.userId, effectiveUserId));
+
+      for (const p of userCompleted) {
+        if (p.completed === 1) completedSet.add(p.topicId);
+      }
+
+      const cookieProgress = await getCookieProgress(user.email);
+      for (const addedId of cookieProgress.added) {
+        completedSet.add(addedId);
+      }
+      for (const removedId of cookieProgress.removed) {
+        completedSet.delete(removedId);
+      }
+    }
 
     const enrichedSubjects = await Promise.all(
       allSubjects.map(async (subj) => {
@@ -21,6 +48,8 @@ export async function GET() {
 
         let totalTopicsCount = 0;
         let completedTopicsCount = 0;
+        let subjectTopicIds: string[] = [];
+        let subjectCompletedTopicIds: string[] = [];
 
         if (milestoneIds.length > 0) {
           const allSubjectTopics = await Promise.all(
@@ -30,19 +59,13 @@ export async function GET() {
           );
           const flatTopics = allSubjectTopics.flat();
           totalTopicsCount = flatTopics.length;
+          subjectTopicIds = flatTopics.map((t) => t.id);
 
           if (user) {
-            const topicIds = flatTopics.map((t) => t.id);
-            if (topicIds.length > 0) {
-              const userCompleted = await db
-                .select()
-                .from(userProgress)
-                .where(eq(userProgress.userId, user.userId));
-              
-              completedTopicsCount = userCompleted.filter(
-                (p) => topicIds.includes(p.topicId) && p.completed === 1
-              ).length;
-            }
+            subjectCompletedTopicIds = flatTopics
+              .filter((t) => completedSet.has(t.id))
+              .map((t) => t.id);
+            completedTopicsCount = subjectCompletedTopicIds.length;
           }
         }
 
@@ -57,6 +80,8 @@ export async function GET() {
           topicsCount: totalTopicsCount,
           completedCount: completedTopicsCount,
           progressPercent,
+          topicIds: subjectTopicIds,
+          completedTopicIds: subjectCompletedTopicIds,
         };
       })
     );

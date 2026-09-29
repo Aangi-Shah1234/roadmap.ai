@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { db, ensureDatabaseReady } from "@/db";
-import { userProgress } from "@/db/schema";
+import { users, userProgress } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, setCookieProgress } from "@/lib/auth";
 import crypto from "crypto";
 
 export async function POST(req: Request) {
@@ -25,48 +25,64 @@ export async function POST(req: Request) {
       );
     }
 
-    const existing = await db
-      .select()
-      .from(userProgress)
-      .where(
-        and(
-          eq(userProgress.userId, user.userId),
-          eq(userProgress.topicId, topicId)
-        )
-      )
-      .limit(1);
-
     const isDone = completed ? 1 : 0;
 
-    if (existing.length > 0) {
-      if (isDone === 0) {
-        await db
-          .delete(userProgress)
-          .where(
-            and(
-              eq(userProgress.userId, user.userId),
-              eq(userProgress.topicId, topicId)
-            )
-          );
-      } else {
-        await db
-          .update(userProgress)
-          .set({ completed: 1, completedAt: new Date() })
-          .where(
-            and(
-              eq(userProgress.userId, user.userId),
-              eq(userProgress.topicId, topicId)
-            )
-          );
+    // 1. Always persist in cross-container cookie for Vercel Serverless reliability
+    await setCookieProgress(user.email, topicId, isDone === 1);
+
+    // 2. Also persist in SQLite database
+    try {
+      const [dbUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, user.email.toLowerCase().trim()))
+        .limit(1);
+
+      const effectiveUserId = dbUser ? dbUser.id : user.userId;
+
+      const existing = await db
+        .select()
+        .from(userProgress)
+        .where(
+          and(
+            eq(userProgress.userId, effectiveUserId),
+            eq(userProgress.topicId, topicId)
+          )
+        )
+        .limit(1);
+
+      if (existing.length > 0) {
+        if (isDone === 0) {
+          await db
+            .delete(userProgress)
+            .where(
+              and(
+                eq(userProgress.userId, effectiveUserId),
+                eq(userProgress.topicId, topicId)
+              )
+            );
+        } else {
+          await db
+            .update(userProgress)
+            .set({ completed: 1, completedAt: new Date() })
+            .where(
+              and(
+                eq(userProgress.userId, effectiveUserId),
+                eq(userProgress.topicId, topicId)
+              )
+            );
+        }
+      } else if (isDone === 1) {
+        await db.insert(userProgress).values({
+          id: crypto.randomUUID(),
+          userId: effectiveUserId,
+          topicId,
+          completed: 1,
+          completedAt: new Date(),
+        });
       }
-    } else if (isDone === 1) {
-      await db.insert(userProgress).values({
-        id: crypto.randomUUID(),
-        userId: user.userId,
-        topicId,
-        completed: 1,
-        completedAt: new Date(),
-      });
+    } catch (dbErr) {
+      console.warn("Non-fatal SQLite progress sync warning:", dbErr);
     }
 
     return NextResponse.json({
@@ -82,3 +98,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
