@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import CertificateModal from "@/components/CertificateModal";
 import {
   Trophy,
   CheckCircle2,
@@ -12,6 +13,7 @@ import {
   Layers,
   LayoutDashboard,
   ShieldCheck,
+  Award,
 } from "lucide-react";
 
 interface SubjectProgress {
@@ -38,6 +40,7 @@ export default function DashboardPage() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [subjects, setSubjects] = useState<SubjectProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [certTrack, setCertTrack] = useState<SubjectProgress | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -210,18 +213,42 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <Link
-                  href={`/roadmap/${sub.slug}`}
-                  className="pill-btn self-start md:self-center flex items-center gap-2 px-5 py-2.5 text-xs font-semibold whitespace-nowrap"
-                >
-                  Continue Trail
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
+                <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
+                  <button
+                    onClick={() => setCertTrack(sub)}
+                    className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap cursor-pointer hover:text-[var(--periwinkle-deep)] transition"
+                  >
+                    <Award className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />
+                    Certificate
+                  </button>
+
+                  <Link
+                    href={`/roadmap/${sub.slug}`}
+                    className="pill-btn flex items-center gap-2 px-5 py-2.5 text-xs font-semibold whitespace-nowrap"
+                  >
+                    Continue Trail
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </main>
+
+      {certTrack && (
+        <CertificateModal
+          isOpen={!!certTrack}
+          onClose={() => setCertTrack(null)}
+          userName={user.name}
+          trackTitle={certTrack.title}
+          category={certTrack.category}
+          milestonesCount={certTrack.milestonesCount}
+          topicsCount={certTrack.topicsCount}
+          completedCount={certTrack.completedCount}
+          progressPercent={certTrack.progressPercent}
+        />
+      )}
     </div>
   );
 }

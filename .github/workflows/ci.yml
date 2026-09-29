@@ -1,4 +1,4 @@
-name: Roadmap AI CI/CD Pipeline
+name: Roadmap AI CI/CD & Docker Pipeline
 
 on:
   push:
@@ -7,15 +7,18 @@ on:
     branches: [main]
 
 jobs:
+  # ============================================================================
+  # STAGE 1: TypeScript Verification, Automated Test Suite & Next.js Build
+  # ============================================================================
   verify:
-    name: Code Quality & Automated Tests
+    name: Code Quality & 16 Automated Tests
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -27,13 +30,49 @@ jobs:
       - name: Type Check (TypeScript)
         run: npm run typecheck
 
-      - name: Seed Database for Testing
-        run: npm run db:push && npm run db:seed
+      - name: Initialize & Seed SQLite Database
+        run: npm run db:seed
 
-      - name: Run Automated Test Suite
+      - name: Run Automated Test Suite (16 Checks)
         run: npm test
 
-      - name: Build Next.js Application
+      - name: Build Production Standalone Next.js Application
         run: npm run build
         env:
           NODE_ENV: production
+
+  # ============================================================================
+  # STAGE 2 (Phase 2.1): Multi-Stage Docker Build & Docker Hub Publishing
+  # ============================================================================
+  docker-build-publish:
+    name: Phase 2.1 — Docker Build & Registry Push
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Production Multi-Stage Docker Image
+        run: docker build -t roadmap-ai:latest .
+
+      - name: Push to Docker Hub (when DOCKERHUB_USERNAME & DOCKERHUB_TOKEN are set)
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "🔐 Authenticating with Docker Hub..."
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker tag roadmap-ai:latest "$DOCKERHUB_USERNAME/roadmap-ai:latest"
+            docker tag roadmap-ai:latest "$DOCKERHUB_USERNAME/roadmap-ai:${GITHUB_SHA::7}"
+            docker push "$DOCKERHUB_USERNAME/roadmap-ai:latest"
+            docker push "$DOCKERHUB_USERNAME/roadmap-ai:${GITHUB_SHA::7}"
+            echo "✅ Pushed $DOCKERHUB_USERNAME/roadmap-ai:latest and :${GITHUB_SHA::7} to Docker Hub!"
+          else
+            echo "ℹ️ Docker image built and verified locally. Add DOCKERHUB_USERNAME and DOCKERHUB_TOKEN in GitHub Secrets to enable remote registry push."
+          fi

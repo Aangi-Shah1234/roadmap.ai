@@ -3,7 +3,8 @@
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
-import { Lock, ArrowRight, ExternalLink } from "lucide-react";
+import CertificateModal from "@/components/CertificateModal";
+import { Lock, ArrowRight, ExternalLink, Award } from "lucide-react";
 import { getLessonContent, LessonData } from "@/lib/lessons";
 
 interface TopicResource {
@@ -69,6 +70,7 @@ export default function RoadmapPage({
 
   // Active topic/lesson (when user clicks a concept row or is reading a lesson)
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [showCertModal, setShowCertModal] = useState(false);
 
   const fetchRoadmap = async () => {
     try {
@@ -418,6 +420,15 @@ export default function RoadmapPage({
                 style={{ width: `${Math.max(stats.progressPercent, 4)}%` }}
               />
             </div>
+            <button
+              onClick={() => setShowCertModal(true)}
+              className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--periwinkle-deep)] hover:underline cursor-pointer"
+            >
+              <Award className="h-3.5 w-3.5" />
+              {stats.progressPercent === 100
+                ? "Claim Verified Certificate"
+                : "View Trail Certificate"}
+            </button>
           </div>
         </div>
 
@@ -519,6 +530,18 @@ export default function RoadmapPage({
           </div>
         )}
       </section>
+
+      <CertificateModal
+        isOpen={showCertModal}
+        onClose={() => setShowCertModal(false)}
+        userName={data.currentUser?.name || "Engineering Learner"}
+        trackTitle={subject.title}
+        category={subject.category}
+        milestonesCount={stats.totalMilestones}
+        topicsCount={stats.totalTopics}
+        completedCount={stats.completedCount}
+        progressPercent={stats.progressPercent}
+      />
     </div>
   );
 }
