@@ -14,6 +14,7 @@ import {
   LayoutDashboard,
   ShieldCheck,
   Award,
+  Lock,
 } from "lucide-react";
 
 interface SubjectProgress {
@@ -214,13 +215,23 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
-                  <button
-                    onClick={() => setCertTrack(sub)}
-                    className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap cursor-pointer hover:text-[var(--periwinkle-deep)] transition"
-                  >
-                    <Award className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />
-                    Certificate
-                  </button>
+                  {sub.progressPercent === 100 ? (
+                    <button
+                      onClick={() => setCertTrack(sub)}
+                      className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap cursor-pointer border-[var(--sage-deep)]/40 text-[var(--sage-deep)] hover:bg-[var(--sage)]/20 transition"
+                    >
+                      <Award className="h-3.5 w-3.5 text-[var(--sage-deep)]" />
+                      Claim Certificate
+                    </button>
+                  ) : (
+                    <span
+                      title="Complete 100% of all topics in this pathway to unlock your Verified Certificate"
+                      className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap opacity-60 cursor-not-allowed select-none"
+                    >
+                      <Lock className="h-3.5 w-3.5 text-[var(--ink-soft)]" />
+                      Certificate Locked ({sub.progressPercent}%)
+                    </span>
+                  )}
 
                   <Link
                     href={`/roadmap/${sub.slug}`}
@@ -236,7 +247,7 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {certTrack && (
+      {certTrack && certTrack.progressPercent === 100 && (
         <CertificateModal
           isOpen={!!certTrack}
           onClose={() => setCertTrack(null)}

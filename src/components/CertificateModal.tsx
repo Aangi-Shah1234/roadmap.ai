@@ -29,7 +29,7 @@ export default function CertificateModal({
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen || progressPercent < 100) return null;
 
   const issueDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",

@@ -420,15 +420,23 @@ export default function RoadmapPage({
                 style={{ width: `${Math.max(stats.progressPercent, 4)}%` }}
               />
             </div>
-            <button
-              onClick={() => setShowCertModal(true)}
-              className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--periwinkle-deep)] hover:underline cursor-pointer"
-            >
-              <Award className="h-3.5 w-3.5" />
-              {stats.progressPercent === 100
-                ? "Claim Verified Certificate"
-                : "View Trail Certificate"}
-            </button>
+            {stats.progressPercent === 100 ? (
+              <button
+                onClick={() => setShowCertModal(true)}
+                className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--sage-deep)] hover:underline cursor-pointer"
+              >
+                <Award className="h-3.5 w-3.5" />
+                Claim Verified Certificate
+              </button>
+            ) : (
+              <div
+                className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--ink-soft)] opacity-75 select-none"
+                title="Complete all waypoints (100%) to unlock your Verified Certificate"
+              >
+                <Lock className="h-3.5 w-3.5" />
+                Complete 100% to unlock certificate
+              </div>
+            )}
           </div>
         </div>
 
@@ -532,7 +540,7 @@ export default function RoadmapPage({
       </section>
 
       <CertificateModal
-        isOpen={showCertModal}
+        isOpen={showCertModal && stats.progressPercent === 100}
         onClose={() => setShowCertModal(false)}
         userName={data.currentUser?.name || "Engineering Learner"}
         trackTitle={subject.title}
