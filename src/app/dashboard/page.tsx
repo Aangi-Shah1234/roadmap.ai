@@ -10,11 +10,14 @@ import {
   CheckCircle2,
   BookOpen,
   ArrowRight,
-  Layers,
   LayoutDashboard,
   ShieldCheck,
   Award,
   Lock,
+  Settings,
+  LogOut,
+  Map,
+  TrendingUp
 } from "lucide-react";
 
 interface SubjectProgress {
@@ -104,16 +107,13 @@ export default function DashboardPage() {
       });
   }, [router]);
 
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col transition-colors duration-200">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="h-8 w-8 border-3 border-[var(--periwinkle-deep)] border-t-transparent rounded-full animate-spin" />
-        </div>
-      </div>
-    );
-  }
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+    router.push("/");
+  };
+
+  if (loading || !user) return null;
 
   const totalTopicsOverall = subjects.reduce((acc, s) => acc + s.topicsCount, 0);
   const completedTopicsOverall = subjects.reduce((acc, s) => acc + s.completedCount, 0);
@@ -122,169 +122,125 @@ export default function DashboardPage() {
       ? Math.round((completedTopicsOverall / totalTopicsOverall) * 100)
       : 0;
 
+  const activeCircumference = 2 * Math.PI * 16;
+  const activeOffset = activeCircumference - (overallPercent / 100) * activeCircumference;
+
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col transition-colors duration-200">
-      <Navbar />
-
-      <main className="max-w-6xl mx-auto px-6 sm:px-12 py-10 w-full flex-1">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-8 border-b border-[var(--line)]">
-          <div>
-            <span className="ghost-pill mb-2 inline-flex items-center gap-1.5 text-[11px] font-semibold">
-              {user.role === "admin" ? (
-                <>
-                  <ShieldCheck className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />
-                  <span className="text-[var(--periwinkle-deep)] font-bold">Administrator Studio</span>
-                </>
-              ) : (
-                "Learner Profile"
-              )}
-            </span>
-            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[var(--ink)] tracking-tight mt-2">
-              Welcome back, {user.name} 👋
-            </h1>
-            <p className="text-xs sm:text-sm text-[var(--ink-soft)] mt-1 font-medium">
-              {user.role === "admin"
-                ? "Manage learning tracks, sequential milestones, and track learner progress."
-                : "Track your milestones, review learned concepts, and keep progressing."}
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
-            {user.role === "admin" && (
-              <Link
-                href="/admin"
-                className="pill-btn inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Admin Studio
-              </Link>
-            )}
-            <Link
-              href="/"
-              className="ghost-pill inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold hover:text-[var(--ink)]"
-            >
-              Explore Tracks
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
+    <div className="dashboard-shell bg-[var(--bg)]">
+      <div className="dash-sidebar">
+        <div className="flex flex-col items-center">
+          <div className="dash-avatar">{user.name.charAt(0).toUpperCase()}</div>
+          <div className="font-bold text-[var(--ink)]">{user.name}</div>
+          <div className="text-[10px] uppercase tracking-wide font-bold px-3 py-1 bg-[var(--line)] rounded-full mt-2 text-[var(--ink-soft)]">
+            {user.role === 'admin' ? 'Admin Studio' : 'Learner'}
           </div>
         </div>
-
-        {/* 3 Pastel Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8">
-          {/* Card 1: Periwinkle */}
-          <div className="p-6 rounded-2xl stat-card-periwinkle flex flex-col justify-between shadow-xs transition-colors">
-            <div className="flex items-center justify-between text-[var(--periwinkle-deep)] mb-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider">Active Trails</span>
-              <BookOpen className="h-4 w-4" />
+        
+        <div className="w-full h-px bg-[var(--line)] my-6"></div>
+        
+        <div className="dash-nav flex-1">
+          <Link href="/dashboard" className="active"><LayoutDashboard className="w-4 h-4" /> Overview</Link>
+          <Link href="/dashboard"><Map className="w-4 h-4" /> My Tracks</Link>
+          <Link href="/dashboard"><TrendingUp className="w-4 h-4" /> Progress</Link>
+          <Link href="/dashboard"><Award className="w-4 h-4" /> Certificates</Link>
+        </div>
+        
+        <div className="dash-nav mt-auto">
+          <Link href="/dashboard"><Settings className="w-4 h-4" /> Settings</Link>
+          <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-rose-500 hover:bg-rose-50 rounded-lg text-left w-full">
+            <LogOut className="w-4 h-4" /> Logout
+          </button>
+        </div>
+      </div>
+      
+      <div className="dash-main">
+        <div className="mb-10">
+          <h1 className="font-display text-4xl font-bold text-[var(--ink)] mb-2">Welcome back, {user.name}</h1>
+          <p className="text-[var(--ink-soft)] font-medium">Pick up where you left off</p>
+        </div>
+        
+        <div className="dash-stats">
+          <div className="bg-[#E9F3E8] p-6 rounded-2xl flex items-center justify-between border border-[#CFE3CE]">
+            <div>
+              <div className="text-[11px] font-bold text-[var(--sage-deep)] uppercase mb-2">Active Tracks</div>
+              <div className="text-3xl font-bold text-[var(--ink)]">{subjects.length}</div>
             </div>
-            <div className="font-display text-3xl font-semibold text-[var(--ink)]">{subjects.length}</div>
-            <p className="text-xs text-[var(--ink-soft)] mt-1 font-medium">DevOps &amp; Cloud engineering</p>
+            <BookOpen className="w-8 h-8 text-[var(--sage-deep)] opacity-50" />
           </div>
-
-          {/* Card 2: Sage */}
-          <div className="p-6 rounded-2xl stat-card-sage flex flex-col justify-between shadow-xs transition-colors">
-            <div className="flex items-center justify-between text-[var(--sage-deep)] mb-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider">Topics Mastered</span>
-              <CheckCircle2 className="h-4 w-4" />
+          
+          <div className="bg-[#EDEFFA] p-6 rounded-2xl flex items-center justify-between border border-[#D3DBF4]">
+            <div>
+              <div className="text-[11px] font-bold text-[var(--periwinkle-deep)] uppercase mb-2">Topics Mastered</div>
+              <div className="text-3xl font-bold text-[var(--ink)]">{completedTopicsOverall} <span className="text-lg text-[var(--ink-soft)]">/ {totalTopicsOverall}</span></div>
             </div>
-            <div className="font-display text-3xl font-semibold text-[var(--ink)]">
-              {completedTopicsOverall}{" "}
-              <span className="text-sm font-normal text-[var(--ink-soft)]">/ {totalTopicsOverall}</span>
-            </div>
-            <p className="text-xs text-[var(--ink-soft)] mt-1 font-medium">Milestone checklist items</p>
+            <CheckCircle2 className="w-8 h-8 text-[var(--periwinkle-deep)] opacity-50" />
           </div>
-
-          {/* Card 3: Peach */}
-          <div className="p-6 rounded-2xl stat-card-peach flex flex-col justify-between shadow-xs transition-colors">
-            <div className="flex items-center justify-between text-[var(--peach-deep)] mb-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider">Overall Completion</span>
-              <Trophy className="h-4 w-4" />
+          
+          <div className="bg-[#FBEADA] p-6 rounded-2xl flex items-center justify-between border border-[#F0D7C3]">
+            <div>
+              <div className="text-[11px] font-bold text-[var(--peach-deep)] uppercase mb-2">Overall</div>
+              <div className="text-3xl font-bold text-[var(--ink)]">{overallPercent}%</div>
             </div>
-            <div className="font-display text-3xl font-semibold text-[var(--ink)]">{overallPercent}%</div>
-            <div className="w-full h-2 bg-black/10 dark:bg-white/15 rounded-full overflow-hidden mt-3">
-              <div
-                className="h-full bg-gradient-to-r from-[var(--peach-deep)] to-[var(--peach)] rounded-full transition-all duration-500"
-                style={{ width: `${overallPercent}%` }}
-              />
+            <div className="relative w-12 h-12 flex items-center justify-center">
+              <Trophy className="w-5 h-5 text-[var(--peach-deep)] absolute" />
+              <svg className="w-12 h-12 transform -rotate-90">
+                <circle cx="24" cy="24" r="16" fill="transparent" stroke="rgba(0,0,0,0.05)" strokeWidth="4" />
+                <circle cx="24" cy="24" r="16" fill="transparent" stroke="var(--peach-deep)" strokeWidth="4" strokeDasharray={activeCircumference} strokeDashoffset={activeOffset} strokeLinecap="round" />
+              </svg>
             </div>
           </div>
         </div>
-
-        {/* Tracks List */}
-        <div className="mt-10">
-          <h2 className="font-display text-2xl font-semibold text-[var(--ink)] mb-6 tracking-tight flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5 text-[var(--periwinkle-deep)]" />
-            Your Enrolled Tracks
-          </h2>
-
-          <div className="space-y-4">
-            {subjects.map((sub) => (
-              <div
-                key={sub.id}
-                className="p-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] hover:border-[var(--periwinkle)] transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-xs"
-              >
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="ghost-pill text-[10px] font-semibold">
-                      {sub.category}
-                    </span>
-                    <span className="text-xs text-[var(--ink-soft)] font-medium">
-                      {sub.milestonesCount} Steps • {sub.topicsCount} Topics
-                    </span>
+        
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="font-display text-2xl font-bold text-[var(--ink)]">Your Enrolled Tracks</h2>
+          {user.role === 'admin' && (
+            <Link href="/admin" className="text-sm font-bold text-[var(--periwinkle-deep)] hover:underline">Go to Admin Studio &rarr;</Link>
+          )}
+        </div>
+        
+        <div className="flex flex-col gap-4">
+          {subjects.map((sub, i) => {
+            const colors = ['bg-[var(--periwinkle)]', 'bg-[var(--sage)]', 'bg-[var(--peach)]'];
+            const colorClass = colors[i % colors.length];
+            return (
+              <div key={sub.id} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 flex gap-6 shadow-sm hover:border-[var(--periwinkle)] transition-colors">
+                <div className={`track-accent-bar ${colorClass}`}></div>
+                <div className="flex-1">
+                  <div className="flex gap-2 items-center mb-2">
+                    <span className="text-[10px] font-bold px-2 py-1 bg-[var(--line)] rounded text-[var(--ink-soft)] uppercase">{sub.category}</span>
                   </div>
-                  <h3 className="font-display text-2xl font-semibold text-[var(--ink)] tracking-tight">{sub.title}</h3>
-                  <p className="text-xs text-[var(--ink-soft)] font-medium line-clamp-1">{sub.description}</p>
-
-                  <div className="pt-2">
-                    <div className="flex justify-between text-xs text-[var(--ink-soft)] mb-1.5 font-medium">
-                      <span>Progress</span>
-                      <span className="text-[var(--periwinkle-deep)] font-semibold">
-                        {sub.completedCount} of {sub.topicsCount} completed ({sub.progressPercent}%)
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-[var(--line)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-[var(--periwinkle-deep)] to-[var(--periwinkle)] rounded-full transition-all duration-500"
-                        style={{ width: `${sub.progressPercent}%` }}
-                      />
-                    </div>
+                  <h3 className="font-display text-xl font-bold mb-4 text-[var(--ink)]">{sub.title}</h3>
+                  <div className="flex items-center gap-4 text-xs font-semibold text-[var(--ink-soft)] mb-2">
+                    <span>{sub.completedCount} / {sub.topicsCount} completed</span>
+                    <span>{sub.progressPercent}%</span>
+                  </div>
+                  <div className="w-full bg-[var(--line)] h-1.5 rounded-full">
+                    <div className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" style={{ width: `${sub.progressPercent}%` }}></div>
                   </div>
                 </div>
-
-                <div className="flex flex-wrap items-center gap-2.5 self-start md:self-center">
+                <div className="flex flex-col justify-center gap-3 border-l border-[var(--line)] pl-6 min-w-[200px]">
                   {sub.progressPercent === 100 ? (
                     <button
                       onClick={() => setCertTrack(sub)}
-                      className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap cursor-pointer border-[var(--sage-deep)]/40 text-[var(--sage-deep)] hover:bg-[var(--sage)]/20 transition"
+                      className="text-xs font-bold px-4 py-2 bg-[#E9F3E8] text-[var(--sage-deep)] rounded-lg flex items-center justify-center gap-2"
                     >
-                      <Award className="h-3.5 w-3.5 text-[var(--sage-deep)]" />
-                      Claim Certificate
+                      <Award className="w-4 h-4" /> Claim Certificate
                     </button>
                   ) : (
-                    <span
-                      title="Complete 100% of all topics in this pathway to unlock your Verified Certificate"
-                      className="ghost-pill flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold whitespace-nowrap opacity-60 cursor-not-allowed select-none"
-                    >
-                      <Lock className="h-3.5 w-3.5 text-[var(--ink-soft)]" />
-                      Certificate Locked ({sub.progressPercent}%)
-                    </span>
+                    <div className="text-xs font-bold px-4 py-2 bg-[var(--bg)] text-[var(--ink-soft)] rounded-lg flex items-center justify-center gap-2 opacity-70">
+                      <Lock className="w-4 h-4" /> Certificate Locked
+                    </div>
                   )}
-
-                  <Link
-                    href={`/roadmap/${sub.slug}`}
-                    className="pill-btn flex items-center gap-2 px-5 py-2.5 text-xs font-semibold whitespace-nowrap"
-                  >
-                    Continue Trail
-                    <ArrowRight className="h-3.5 w-3.5" />
+                  <Link href={`/roadmap/${sub.slug}`} className="text-xs font-bold px-4 py-2 bg-[var(--ink)] text-[var(--bg)] rounded-lg flex items-center justify-center text-center hover:bg-[var(--periwinkle-deep)] transition">
+                    Continue Trail &rarr;
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
-      </main>
-
+      </div>
+      
       {certTrack && certTrack.progressPercent === 100 && (
         <CertificateModal
           isOpen={!!certTrack}

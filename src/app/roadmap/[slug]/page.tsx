@@ -485,34 +485,52 @@ export default function RoadmapPage({
             </div>
           </div>
 
-          {/* Bottom Nav Bar */}
-          <div className="lesson-footer">
-            {prevTopic ? (
-              <button
-                onClick={() => setSelectedTopicId(prevTopic.id)}
-                className="foot-btn"
-              >
-                <span className="arrow-circle">←</span> {prevTopic.title}
-              </button>
-            ) : (
-              <div />
-            )}
+          {/* Fixed Bottom Bar */}
+          <div className="lesson-bottom-bar">
+            <div>
+              {prevTopic ? (
+                <button
+                  onClick={() => setSelectedTopicId(prevTopic.id)}
+                  className="px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] flex items-center gap-2 border border-[var(--line)] rounded-lg bg-[var(--surface)] hover:bg-[var(--bg)] transition"
+                >
+                  &larr; Previous Concept
+                </button>
+              ) : (
+                <div />
+              )}
+            </div>
 
-            {nextTopic ? (
+            <div>
               <button
-                onClick={() => setSelectedTopicId(nextTopic.id)}
-                className="foot-btn next"
+                type="button"
+                onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
+                className={`px-8 py-3 rounded-full font-bold text-white transition-colors shadow-sm ${
+                  currentTopic.isCompleted 
+                    ? "bg-[var(--sage-deep)] hover:bg-[var(--sage)]" 
+                    : "bg-[var(--ink)] hover:bg-[var(--ink-soft)]"
+                }`}
               >
-                {nextTopic.title} <span className="arrow-circle">→</span>
+                {currentTopic.isCompleted ? "Completed (Click to undo)" : "Mark as Complete"}
               </button>
-            ) : (
-              <button
-                onClick={() => setSelectedTopicId(null)}
-                className="foot-btn next"
-              >
-                Finish Milestone <span className="arrow-circle">✓</span>
-              </button>
-            )}
+            </div>
+
+            <div>
+              {nextTopic ? (
+                <button
+                  onClick={() => setSelectedTopicId(nextTopic.id)}
+                  className="px-4 py-2 text-sm font-semibold text-[var(--bg)] bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)] flex items-center gap-2 rounded-lg transition"
+                >
+                  Next Concept &rarr;
+                </button>
+              ) : (
+                <button
+                  onClick={() => setSelectedTopicId(null)}
+                  className="px-4 py-2 text-sm font-semibold text-[var(--bg)] bg-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle)] flex items-center gap-2 rounded-lg transition"
+                >
+                  Finish Milestone ✓
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -530,143 +548,146 @@ export default function RoadmapPage({
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col">
       <Navbar />
 
-      <section className="roadmap-shell">
-        {/* Roadmap Header */}
-        <div className="roadmap-header">
-          <div>
-            <h2>
-              {subject.title} <span className="level-tag">{subject.category}</span>
-            </h2>
-            <p>{subject.description}</p>
-          </div>
-          <div className="progress-box">
-            <span className="num">{stats.progressPercent}%</span>{" "}
-            <span className="label">
-              · {stats.completedCount} of {stats.totalTopics} waypoints
-            </span>
-            <div className="progress-track">
-              <div
-                className="progress-fill"
-                style={{ width: `${Math.max(stats.progressPercent, 4)}%` }}
-              />
+      <section className="roadmap-shell p-0 max-w-full">
+        {/* Roadmap Header Band */}
+        <div className="trail-header-band">
+          <div className="inner">
+            <div>
+              <h1 className="font-display text-4xl font-bold text-[var(--ink)] mb-2">
+                {subject.title} <span className="text-[10px] tracking-wider uppercase bg-[var(--line)] text-[var(--ink-soft)] px-3 py-1 rounded-full align-middle ml-2">{subject.category}</span>
+              </h1>
+              <p className="text-sm text-[var(--ink-soft)] max-w-2xl">{subject.description}</p>
             </div>
-            {stats.progressPercent === 100 ? (
-              <button
-                onClick={() => setShowCertModal(true)}
-                className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--sage-deep)] hover:underline cursor-pointer"
-              >
-                <Award className="h-3.5 w-3.5" />
-                Claim Verified Certificate
-              </button>
-            ) : (
-              <div
-                className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-semibold text-[var(--ink-soft)] opacity-75 select-none"
-                title="Complete all waypoints (100%) to unlock your Verified Certificate"
-              >
-                <Lock className="h-3.5 w-3.5" />
-                Complete 100% to unlock certificate
+            
+            <div className="bg-[var(--surface)] p-4 rounded-xl border border-[var(--line)] flex flex-col gap-2 min-w-[240px]">
+              <div className="flex justify-between items-center text-xs font-bold">
+                <span className="text-[var(--ink-soft)]">{stats.completedCount} of {stats.totalTopics} waypoints</span>
+                <span className="text-[var(--periwinkle-deep)] text-lg">{stats.progressPercent}%</span>
               </div>
-            )}
+              <div className="w-full bg-[var(--line)] h-2 rounded-full overflow-hidden">
+                <div 
+                  className="bg-[var(--periwinkle)] h-full rounded-full"
+                  style={{ width: `${Math.max(stats.progressPercent, 2)}%` }}
+                ></div>
+              </div>
+              
+              {stats.progressPercent === 100 ? (
+                <button
+                  onClick={() => setShowCertModal(true)}
+                  className="mt-2 text-xs font-bold text-center py-2 bg-[var(--sage)] text-white rounded-lg flex items-center justify-center gap-1.5"
+                >
+                  <Award className="h-3.5 w-3.5" /> Claim Certificate
+                </button>
+              ) : (
+                <div className="mt-2 text-xs font-bold text-center py-2 bg-[var(--bg)] text-[var(--ink-soft)] rounded-lg flex items-center justify-center gap-1.5 opacity-75">
+                  <Lock className="h-3.5 w-3.5" /> Certificate Locked
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* The Horizontal Trail */}
-        <div className="trail-wrap">
-          <svg className="trail-svg" viewBox="0 0 1000 60" preserveAspectRatio="none">
-            <line
-              x1="55"
-              y1="26"
-              x2="945"
-              y2="26"
-              stroke="var(--line)"
-              strokeWidth="3"
-              strokeDasharray="1 10"
-              strokeLinecap="round"
-            />
-          </svg>
-
-          <div className="trail-nodes">
+        {/* TWO COLUMN layout */}
+        <div className="trail-columns">
+          {/* LEFT COLUMN */}
+          <div className="trail-timeline">
             {milestones.map((m, idx) => {
               const isDone = m.topics?.length > 0 && m.topics.every((t) => t.isCompleted);
               const isActive = idx === activeMilestoneIndex;
 
               return (
-                <button
-                  key={m.id}
-                  onClick={() => setActiveMilestoneIndex(idx)}
-                  className={`trail-node ${isDone ? "done" : ""} ${isActive ? "active" : ""}`}
-                >
-                  <div className="node-circle">
+                <div key={m.id} className="timeline-milestone">
+                  <div className={`timeline-step-num ${isDone ? "done" : isActive ? "active" : "upcoming"}`}>
                     {isDone ? "✓" : m.order}
                   </div>
-                  <div className="node-label">
-                    {m.title.split(" ")[0]}
+                  <div className="milestone-card">
+                    <div
+                      className="milestone-card-header"
+                      onClick={() => setActiveMilestoneIndex(idx)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-bold font-display text-lg">{m.title}</span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded bg-[var(--line)] text-[var(--ink-soft)]">{m.level}</span>
+                      </div>
+                      <div className="text-[var(--ink-soft)]">
+                        {isActive ? '−' : '+'}
+                      </div>
+                    </div>
+
+                    {isActive && (
+                      <div className="pb-4">
+                        {m.topics?.map((topic) => (
+                          <div key={topic.id} className="topic-row">
+                            <button
+                              onClick={() => handleToggleComplete(topic.id, !topic.isCompleted)}
+                              className={`w-5 h-5 rounded border-2 flex items-center justify-center ${topic.isCompleted ? 'bg-[var(--sage)] border-[var(--sage)] text-white' : 'border-[var(--line)] text-transparent'}`}
+                            >
+                              <span className="text-xs">✓</span>
+                            </button>
+                            <span className={`flex-1 text-sm ${topic.isCompleted ? 'text-[var(--ink-soft)] line-through' : 'font-medium'}`}>{topic.title}</span>
+                            <button
+                              onClick={() => setSelectedTopicId(topic.id)}
+                              className="text-xs font-bold text-[var(--periwinkle-deep)] hover:underline"
+                            >
+                              Read &rarr;
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </button>
+                </div>
               );
             })}
           </div>
-        </div>
 
-        {/* Step Detail Card */}
-        {currentMilestone && (
-          <div className="step-card">
-            <div className="step-card-top">
-              <div className="step-eyebrow">
-                <span className="step-num">
-                  Step {currentMilestone.order < 10 ? `0${currentMilestone.order}` : currentMilestone.order}
-                </span>
-                <span className="step-level">{currentMilestone.level}</span>
+          {/* RIGHT COLUMN */}
+          <div className="trail-sidebar">
+            <div className="text-xs font-bold text-[var(--ink-soft)] uppercase tracking-wider mb-2">
+              Step {activeMilestoneIndex + 1} of {milestones.length}
+            </div>
+            <h3 className="font-display text-xl font-bold mb-4">{currentMilestone?.title}</h3>
+            
+            <div className="mb-6">
+              <div className="flex justify-between text-xs font-semibold text-[var(--ink-soft)] mb-2">
+                <span>{completedInActiveMilestone} of {totalInActiveMilestone} topics done</span>
+                <span>{Math.round((completedInActiveMilestone / (totalInActiveMilestone || 1)) * 100)}%</span>
               </div>
-              <div
-                className="expand-btn"
-                title="Active Milestone"
-              >
-                ⤢
+              <div className="w-full bg-[var(--line)] h-1.5 rounded-full">
+                <div 
+                  className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" 
+                  style={{ width: `${Math.round((completedInActiveMilestone / (totalInActiveMilestone || 1)) * 100)}%` }}
+                ></div>
               </div>
             </div>
 
-            <h3>{currentMilestone.title}</h3>
-            {currentMilestone.description && (
-              <p className="desc">{currentMilestone.description}</p>
-            )}
-
-            <div className="concepts-head">
-              <span className="label">CONCEPTS TO LEARN</span>
-              <span className="count">
-                {completedInActiveMilestone} / {totalInActiveMilestone} done
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {currentMilestone.topics?.map((topic) => (
-                <div
+            <div className="space-y-1 mb-8">
+              {currentMilestone?.topics?.map(topic => (
+                <div 
                   key={topic.id}
-                  className={`concept-row ${topic.isCompleted ? "done" : "todo"}`}
+                  onClick={() => setSelectedTopicId(topic.id)}
+                  className={`sidebar-topic-row ${topic.id === selectedTopicId ? 'active' : ''} ${topic.isCompleted ? 'done' : ''}`}
                 >
-                  <div
-                    onClick={() => handleToggleComplete(topic.id, !topic.isCompleted)}
-                    className="concept-left flex-1 cursor-pointer"
-                    title={topic.isCompleted ? "Mark as incomplete" : "Mark as complete"}
-                  >
-                    <span className="check">
-                      {topic.isCompleted ? "✓" : ""}
-                    </span>
-                    <span className="name">{topic.title}</span>
-                  </div>
-
-                  <button
-                    onClick={() => setSelectedTopicId(topic.id)}
-                    className="chev cursor-pointer hover:border-[var(--periwinkle)] transition"
-                    title="Open lesson and documentation"
-                  >
-                    &rarr;
-                  </button>
+                  <span className="text-sm truncate flex-1">{topic.title}</span>
+                  {topic.isCompleted && <span className="text-xs ml-2">✓</span>}
                 </div>
               ))}
             </div>
+
+            {selectedTopicId && (
+              <div className="bg-[var(--bg)] border border-[var(--line)] p-4 rounded-xl">
+                <div className="text-[10px] font-bold text-[var(--ink-soft)] uppercase mb-1">Currently Reading</div>
+                <div className="font-bold text-sm mb-3 line-clamp-2">{currentTopic?.title}</div>
+                <button 
+                  onClick={() => window.scrollTo(0, 0)}
+                  className="w-full py-2 bg-[var(--ink)] text-[var(--bg)] rounded-lg text-xs font-bold text-center"
+                >
+                  Focus Lesson &rarr;
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </section>
 
       <CertificateModal

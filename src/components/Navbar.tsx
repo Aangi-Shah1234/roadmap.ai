@@ -38,7 +38,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 flex items-center justify-between px-6 sm:px-12 py-5 bg-[var(--surface)] border-b border-[var(--line)]">
+    <nav className="navbar-new flex items-center justify-between px-6 sm:px-12 py-5">
       {/* Brand */}
       <Link href="/" className="brand">
         <span className="dot">R</span>
@@ -130,15 +130,6 @@ export default function Navbar() {
               {user.name}
               {user.role === "admin" && <ShieldCheck className="h-3.5 w-3.5 text-[var(--periwinkle-deep)]" />}
             </span>
-            {user.role === "admin" && (
-              <Link
-                href="/admin"
-                className="ghost-pill inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--periwinkle-deep)] hover:text-[var(--ink)]"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Admin
-              </Link>
-            )}
             <Link href="/dashboard" className="pill-btn">
               Dashboard
             </Link>
