@@ -600,7 +600,7 @@ export default function RoadmapPage({
                   <div className={`timeline-step-num ${isDone ? "done" : isActive ? "active" : "upcoming"}`}>
                     {isDone ? "✓" : m.order}
                   </div>
-                  <div className="milestone-card">
+                  <div className={`milestone-card${isActive ? " is-active" : ""}`}>
                     <div
                       className="milestone-card-header"
                       onClick={() => setActiveMilestoneIndex(idx)}

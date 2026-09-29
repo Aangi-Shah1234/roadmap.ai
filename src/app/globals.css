@@ -1692,31 +1692,60 @@ p.lesson-intro {
   font-weight: 500;
   font-size: 14px;
   text-decoration: none;
+  transition: background 0.15s, color 0.15s;
 }
 .dash-nav a:hover {
   background: var(--bg);
+  color: var(--ink);
 }
 .dash-nav a.active {
   background: rgba(107, 130, 206, 0.15);
   color: var(--periwinkle-deep);
+  font-weight: 600;
+}
+.dash-nav button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.dash-nav button:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+.dash-nav button.active {
+  background: rgba(107, 130, 206, 0.15);
+  color: var(--periwinkle-deep);
+  font-weight: 600;
 }
 .dash-main {
   flex: 1;
   padding: 40px;
   background: var(--bg);
+  overflow-y: auto;
 }
 .dash-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-  margin: 32px 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin: 28px 0;
 }
 .track-accent-bar {
   width: 6px;
   border-radius: 6px;
-  margin-right: 24px;
   flex-shrink: 0;
 }
+
 
 /* Roadmap Trail (Vertical Timeline) */
 .trail-header-band {
