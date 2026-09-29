@@ -24,10 +24,10 @@ async function runTests() {
     const allUsers = await db.select().from(users);
     assert(allUsers.length >= 2, "Database contains pre-seeded users");
 
-    const admin = allUsers.find((u) => u.role === "admin");
+    const admin = allUsers.find((u) => u.email === "admin@roadmap.ai" && u.role === "admin");
     assert(admin !== undefined && admin.email === "admin@roadmap.ai", "Admin user exists (admin@roadmap.ai)");
 
-    const learner = allUsers.find((u) => u.role === "learner");
+    const learner = allUsers.find((u) => u.email === "learner@roadmap.ai" && u.role === "learner");
     assert(learner !== undefined && learner.email === "learner@roadmap.ai", "Learner user exists (learner@roadmap.ai)");
 
     // Test 2: Verify password hashing & auth check
