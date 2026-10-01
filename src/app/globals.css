@@ -1866,9 +1866,8 @@ p.lesson-intro {
   z-index: 40;
 }
 
-
 /* ============================================
-   LP2 — LANDING PAGE REDESIGN
+   LP2 -- LANDING PAGE REDESIGN
    ============================================ */
 
 @keyframes lp2-drift-1 {
@@ -2176,7 +2175,7 @@ p.lesson-intro {
   padding: 32px 0;
   border-top: 2px solid var(--step-color, var(--periwinkle-deep));
 }
-.lp2-step:last-child { border-bottom: 2px solid; }
+.lp2-step:last-child { border-bottom: 2px solid var(--step-color, var(--peach-deep)); }
 .lp2-step-n {
   font-family: var(--font-display);
   font-size: 42px; font-weight: 700; line-height: 1;
@@ -2195,11 +2194,7 @@ p.lesson-intro {
 .lp2-step-body { font-size: 14px; color: var(--ink-soft); line-height: 1.6; }
 .lp2-step-arrow { color: var(--ink-soft); flex-shrink: 0; }
 @media (max-width: 760px) {
-  .lp2-step {
-    grid-template-columns: 52px 1fr;
-    grid-template-rows: auto auto;
-    gap: 8px 16px;
-  }
+  .lp2-step { grid-template-columns: 52px 1fr; grid-template-rows: auto auto; gap: 8px 16px; }
   .lp2-step-divider, .lp2-step-arrow { display: none; }
   .lp2-step-body { grid-column: 1 / -1; }
 }
@@ -2228,7 +2223,6 @@ p.lesson-intro {
 }
 .lp2-tab:hover { color: var(--ink); }
 .lp2-tab.active { color: var(--ink); border-bottom-color: var(--periwinkle-deep); font-weight: 700; }
-
 .lp2-track-list { margin-top: 8px; }
 .lp2-track-row {
   display: grid;
@@ -2262,10 +2256,9 @@ p.lesson-intro {
   border-bottom: 1px solid var(--line);
 }
 
-/* CTA OPTION A â€” DARK SPLIT */
+/* CTA OPTION A */
 .lp2-cta { display: grid; grid-template-columns: 60% 40%; min-height: 340px; }
 @media (max-width: 760px) { .lp2-cta { grid-template-columns: 1fr; } }
-
 .lp2-cta-left {
   background: #1E2340;
   padding: 72px 56px;
@@ -2295,7 +2288,6 @@ p.lesson-intro {
   text-decoration: none; transition: color 0.2s;
 }
 .lp2-cta-ghost:hover { color: #fff; }
-
 .lp2-cta-right {
   background: linear-gradient(160deg, var(--periwinkle) 0%, var(--sage) 100%);
   display: flex; flex-direction: column;
