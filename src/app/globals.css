@@ -1341,6 +1341,21 @@ p.lesson-intro {
   justify-content: center;
   padding: 48px;
 }
+@media (max-width: 840px) {
+  .auth-shell {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .auth-panel-left {
+    width: 100%;
+    padding: 32px 20px;
+    min-height: 200px;
+  }
+  .auth-panel-right {
+    width: 100%;
+    padding: 32px 20px;
+  }
+}
 .auth-trail-card {
   background: var(--surface);
   border-radius: 16px;
@@ -1751,6 +1766,36 @@ p.lesson-intro {
   flex-shrink: 0;
 }
 
+@media (max-width: 840px) {
+  .dashboard-shell {
+    flex-direction: column;
+  }
+  .dash-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 16px;
+  }
+  .dash-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .dash-nav button {
+    width: auto;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .dash-main {
+    padding: 20px 16px;
+  }
+  .dash-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
 
 /* Roadmap Trail (Vertical Timeline) */
 .trail-header-band {
@@ -1856,7 +1901,6 @@ p.lesson-intro {
 .sidebar-topic-row.active { color: var(--periwinkle-deep); font-weight: 600; }
 .sidebar-topic-row.done { color: var(--sage-deep); }
 
-/* Lesson Reader Bottom Bar */
 .lesson-bottom-bar {
   position: fixed;
   bottom: 0;
@@ -1870,6 +1914,54 @@ p.lesson-intro {
   align-items: center;
   z-index: 40;
 }
+
+@media (max-width: 840px) {
+  .trail-header-band {
+    padding: 24px 16px;
+  }
+  .trail-header-band .inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .trail-columns {
+    flex-direction: column;
+    padding: 20px 16px;
+    gap: 24px;
+  }
+  .trail-timeline {
+    width: 100%;
+  }
+  .trail-sidebar {
+    width: 100%;
+    position: static;
+    top: auto;
+    margin-top: 16px;
+  }
+  .lesson-bottom-bar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .lesson-bottom-bar > div:nth-child(2) {
+    order: 1;
+    width: 100%;
+  }
+  .lesson-bottom-bar > div:nth-child(1),
+  .lesson-bottom-bar > div:nth-child(3) {
+    order: 2;
+    flex: 1;
+  }
+  .lesson-bottom-bar {
+    flex-wrap: wrap;
+  }
+  .lesson-bottom-bar button {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
 
 /* ============================================
    LP2 -- LANDING PAGE REDESIGN

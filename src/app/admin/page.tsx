@@ -237,7 +237,7 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col transition-colors duration-200">
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-6 sm:px-12 py-10 w-full flex-1">
+      <main className="max-w-6xl mx-auto px-4 sm:px-12 py-6 sm:py-10 w-full flex-1">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[var(--line)]">
           <div>
@@ -245,7 +245,7 @@ export default function AdminPage() {
               <ShieldCheck className="h-3.5 w-3.5" />
               Admin Studio
             </span>
-            <h1 className="font-display text-3xl sm:text-4xl font-semibold text-[var(--ink)] tracking-tight mt-2">
+            <h1 className="font-display text-2xl sm:text-4xl font-semibold text-[var(--ink)] tracking-tight mt-2">
               Track Content Manager
             </h1>
             <p className="text-xs text-[var(--ink-soft)] mt-1 font-medium">
@@ -273,7 +273,7 @@ export default function AdminPage() {
           )}
 
           {/* Tabs */}
-          <div className="flex flex-wrap gap-2 my-6 p-1.5 bg-[var(--bg-subtle)] rounded-2xl border border-[var(--border-color)] w-fit">
+          <div className="flex flex-wrap gap-1.5 my-4 sm:my-6 p-1.5 bg-[var(--bg-subtle)] rounded-2xl border border-[var(--border-color)] w-full sm:w-fit">
             <button
               onClick={() => setActiveTab("subjects")}
               className={`px-4 py-2 text-xs font-bold rounded-xl transition flex items-center gap-2 ${

@@ -129,15 +129,17 @@ export default function DashboardPage() {
   return (
     <div className="dashboard-shell bg-[var(--bg)]">
       <div className="dash-sidebar">
-        <div className="flex flex-col items-center">
-          <div className="dash-avatar">{user.name.charAt(0).toUpperCase()}</div>
-          <div className="font-bold text-[var(--ink)]">{user.name}</div>
-          <div className="text-[10px] uppercase tracking-wide font-bold px-3 py-1 bg-[var(--line)] rounded-full mt-2 text-[var(--ink-soft)]">
-            {user.role === 'admin' ? 'Admin Studio' : 'Learner'}
+        <div className="flex items-center gap-4 sm:flex-col sm:items-center">
+          <div className="dash-avatar mb-0 sm:mb-3">{user.name.charAt(0).toUpperCase()}</div>
+          <div className="text-left sm:text-center">
+            <div className="font-bold text-[var(--ink)] text-sm sm:text-base">{user.name}</div>
+            <div className="text-[10px] uppercase tracking-wide font-bold px-2.5 py-0.5 bg-[var(--line)] rounded-full mt-1 text-[var(--ink-soft)] inline-block">
+              {user.role === 'admin' ? 'Admin Studio' : 'Learner'}
+            </div>
           </div>
         </div>
         
-        <div className="w-full h-px bg-[var(--line)] my-6"></div>
+        <div className="w-full h-px bg-[var(--line)] my-3 sm:my-6"></div>
         
         <div className="dash-nav flex-1">
           <button onClick={() => setActiveTab("overview")} className={activeTab === "overview" ? "active" : ""}><LayoutDashboard className="w-4 h-4" /> Overview</button>
@@ -146,7 +148,7 @@ export default function DashboardPage() {
           <button onClick={() => setActiveTab("certificates")} className={activeTab === "certificates" ? "active" : ""}><Award className="w-4 h-4" /> Certificates</button>
         </div>
         
-        <div className="dash-nav mt-auto">
+        <div className="dash-nav mt-3 sm:mt-auto pt-3 border-t sm:border-t-0 border-[var(--line)]">
           <button onClick={() => setActiveTab("overview")} className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-[var(--ink-soft)] hover:bg-[var(--bg)] rounded-lg text-left w-full"><Settings className="w-4 h-4" /> Settings</button>
           <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-rose-500 hover:bg-rose-50 rounded-lg text-left w-full">
             <LogOut className="w-4 h-4" /> Logout
@@ -155,10 +157,10 @@ export default function DashboardPage() {
       </div>
       
       <div className="dash-main">
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="font-display text-4xl font-bold text-[var(--ink)] mb-1">Welcome back, {user.name}</h1>
-            <p className="text-[var(--ink-soft)] font-medium">Pick up where you left off</p>
+            <h1 className="font-display text-2xl sm:text-4xl font-bold text-[var(--ink)] mb-1">Welcome back, {user.name}</h1>
+            <p className="text-sm sm:text-base text-[var(--ink-soft)] font-medium">Pick up where you left off</p>
           </div>
           {user.role === 'admin' && (
             <Link href="/admin" className="text-sm font-bold text-[var(--periwinkle-deep)] hover:underline">Admin Studio &rarr;</Link>
