@@ -1450,11 +1450,16 @@ p.lesson-intro {
 
 /* Navbar */
 .navbar-new {
-  background: var(--surface);
+  background: rgba(var(--surface-rgb, 255,255,255), 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
   z-index: 50;
+}
+.dark .navbar-new {
+  background: rgba(30,34,53,0.85);
 }
 
 /* Landing Page */
@@ -1900,7 +1905,6 @@ p.lesson-intro {
 /* HERO */
 .lp2-hero {
   position: relative;
-  overflow: hidden;
   min-height: 92vh;
   display: flex;
   align-items: center;
@@ -1916,19 +1920,19 @@ p.lesson-intro {
 .lp2-orb-1 {
   width: 500px; height: 500px;
   background: rgba(143,163,227,0.55);
-  top: -80px; right: 8%;
+  top: 5%; right: 3%;
   animation: lp2-drift-1 14s ease-in-out infinite;
 }
 .lp2-orb-2 {
   width: 420px; height: 420px;
   background: rgba(168,201,165,0.48);
-  bottom: 0; left: -40px;
+  bottom: 5%; left: 3%;
   animation: lp2-drift-2 18s ease-in-out infinite;
 }
 .lp2-orb-3 {
   width: 300px; height: 300px;
   background: rgba(242,196,160,0.50);
-  top: 80px; right: 32%;
+  top: 20%; right: 36%;
   animation: lp2-drift-3 11s ease-in-out infinite;
 }
 .dark .lp2-orb-1 { background: rgba(143,163,227,0.22); }
