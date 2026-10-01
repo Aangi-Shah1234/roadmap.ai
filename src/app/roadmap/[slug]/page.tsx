@@ -14,6 +14,8 @@ import {
   FileText,
   Terminal,
   Play,
+  CheckCheck,
+  CheckCircle2,
 } from "lucide-react";
 import { getLessonContent, LessonData } from "@/lib/lessons";
 
@@ -504,13 +506,23 @@ export default function RoadmapPage({
               <button
                 type="button"
                 onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
-                className={`px-8 py-3 rounded-full font-bold text-white transition-colors shadow-sm ${
+                className={`px-8 py-3 rounded-full font-bold text-white transition-all shadow-md flex items-center gap-2 cursor-pointer ${
                   currentTopic.isCompleted 
-                    ? "bg-[var(--sage-deep)] hover:bg-[var(--sage)]" 
-                    : "bg-[var(--ink)] hover:bg-[var(--ink-soft)]"
+                    ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20" 
+                    : "bg-[var(--periwinkle-deep)] hover:opacity-90 shadow-indigo-500/20"
                 }`}
               >
-                {currentTopic.isCompleted ? "Completed (Click to undo)" : "Mark as Complete"}
+                {currentTopic.isCompleted ? (
+                  <>
+                    <CheckCheck className="w-4 h-4 text-white" />
+                    <span>Completed (Click to undo)</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-white" />
+                    <span>Mark as Complete</span>
+                  </>
+                )}
               </button>
             </div>
 

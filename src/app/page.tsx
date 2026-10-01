@@ -116,9 +116,12 @@ export default function HomePage() {
         {/* Subtle Tech Grid Background */}
         <div className="absolute inset-0 pointer-events-none opacity-[0.04] dark:opacity-[0.07] bg-[radial-gradient(#6B82CE_1px,transparent_1px)] [background-size:24px_24px]" />
 
+        {/* Animated Ambient Light Aura */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-gradient-to-tr from-[var(--periwinkle)]/25 via-emerald-500/15 to-transparent rounded-full blur-[110px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
+
         <div className="max-w-6xl mx-auto relative z-10">
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] text-xs font-mono font-medium text-[var(--ink-soft)] mb-6 shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] text-xs font-mono font-medium text-[var(--ink-soft)] mb-6 shadow-sm hover:border-[var(--periwinkle)] transition">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -129,7 +132,7 @@ export default function HomePage() {
           {/* Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-5 max-w-4xl text-[var(--ink)]">
             The Engineering Engine for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--periwinkle-deep)] to-[var(--periwinkle)]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--periwinkle-deep)] via-indigo-500 to-[var(--periwinkle)] animate-gradient">
               High-Velocity
             </span>{" "}
             Careers.
@@ -144,20 +147,21 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-4 mb-12">
             <a
               href="#pathways"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--periwinkle-deep)] text-white font-semibold text-sm hover:opacity-90 transition shadow-sm hover:shadow"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--periwinkle-deep)] text-white font-semibold text-sm hover:opacity-90 transition shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               Explore Pathways <ArrowRight className="w-4 h-4" />
             </a>
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-semibold text-sm hover:bg-[var(--bg-alt)] transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-semibold text-sm hover:bg-[var(--bg-alt)] hover:border-[var(--periwinkle)] transition hover:-translate-y-0.5"
             >
               Create Free Account
             </Link>
           </div>
 
-          {/* ── THE INTERACTIVE WORKBENCH (CENTERPIECE) ── */}
-          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-xl overflow-hidden">
+          {/* ── THE INTERACTIVE WORKBENCH (CENTERPIECE WITH GLOW BORDER) ── */}
+          <div className="relative rounded-2xl p-[1px] bg-gradient-to-b from-[var(--line)] via-[var(--periwinkle)]/30 to-[var(--line)] shadow-2xl">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
             {/* Top Window Bar */}
             <div className="flex flex-wrap items-center justify-between border-b border-[var(--line)] px-4 py-2.5 bg-[var(--bg-alt)]/60 gap-2">
               <div className="flex items-center gap-2">
@@ -365,6 +369,7 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
