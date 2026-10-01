@@ -347,22 +347,21 @@ export default function RoadmapPage({
 
         <div className="shell">
           {/* Breadcrumb / back-to-trail */}
-          <div className="crumb">
+          <div className="crumb flex items-center gap-1.5 flex-wrap text-xs sm:text-sm">
             <button
               onClick={() => setSelectedTopicId(null)}
-              className="back-chip cursor-pointer hover:border-[var(--periwinkle)] transition"
+              className="back-chip cursor-pointer hover:border-[var(--periwinkle)] transition text-xs font-semibold px-2.5 py-1"
             >
               &larr; Back to trail
             </button>
-            <span className="sep">/</span>
-            <span>{subject.title}</span>
-            <span className="sep">/</span>
-            <span>
-              Step {currentMilestone.order < 10 ? `0${currentMilestone.order}` : currentMilestone.order} ·{" "}
-              {currentMilestone.title}
+            <span className="sep text-[var(--ink-soft)]">/</span>
+            <span className="hidden sm:inline text-[var(--ink-soft)]">{subject.title}</span>
+            <span className="sep hidden sm:inline text-[var(--ink-soft)]">/</span>
+            <span className="hidden md:inline text-[var(--ink-soft)]">
+              Step {currentMilestone.order < 10 ? `0${currentMilestone.order}` : currentMilestone.order}
             </span>
-            <span className="sep">/</span>
-            <span className="current">{currentTopic.title}</span>
+            <span className="sep hidden md:inline text-[var(--ink-soft)]">/</span>
+            <span className="current font-bold truncate max-w-[180px] sm:max-w-none">{currentTopic.title}</span>
           </div>
 
           {/* Mini trail progress within the step */}
@@ -488,25 +487,12 @@ export default function RoadmapPage({
           </div>
 
           {/* Fixed Bottom Bar */}
-          <div className="lesson-bottom-bar">
-            <div>
-              {prevTopic ? (
-                <button
-                  onClick={() => setSelectedTopicId(prevTopic.id)}
-                  className="px-4 py-2 text-sm font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] flex items-center gap-2 border border-[var(--line)] rounded-lg bg-[var(--surface)] hover:bg-[var(--bg)] transition"
-                >
-                  &larr; Previous Concept
-                </button>
-              ) : (
-                <div />
-              )}
-            </div>
-
-            <div>
+          <div className="lesson-bottom-bar flex flex-col sm:flex-row items-center justify-between gap-2.5 px-4 py-2.5 sm:px-12 sm:py-4">
+            <div className="w-full sm:w-auto order-1 sm:order-2 flex justify-center">
               <button
                 type="button"
                 onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
-                className={`px-8 py-3 rounded-full font-bold text-white transition-all shadow-md flex items-center gap-2 cursor-pointer ${
+                className={`w-full sm:w-auto px-6 py-2.5 sm:px-8 sm:py-3 rounded-full font-bold text-white transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm ${
                   currentTopic.isCompleted 
                     ? "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20" 
                     : "bg-[var(--periwinkle-deep)] hover:opacity-90 shadow-indigo-500/20"
@@ -526,18 +512,29 @@ export default function RoadmapPage({
               </button>
             </div>
 
-            <div>
+            <div className="flex items-center justify-between w-full sm:w-auto gap-2 order-2 sm:order-1">
+              {prevTopic ? (
+                <button
+                  onClick={() => setSelectedTopicId(prevTopic.id)}
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] flex items-center gap-1.5 border border-[var(--line)] rounded-lg bg-[var(--surface)] hover:bg-[var(--bg)] transition"
+                >
+                  &larr; Prev
+                </button>
+              ) : (
+                <div />
+              )}
+
               {nextTopic ? (
                 <button
                   onClick={() => setSelectedTopicId(nextTopic.id)}
-                  className="px-4 py-2 text-sm font-semibold text-[var(--bg)] bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)] flex items-center gap-2 rounded-lg transition"
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--bg)] bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)] flex items-center gap-1.5 rounded-lg transition"
                 >
                   Next Concept &rarr;
                 </button>
               ) : (
                 <button
                   onClick={() => setSelectedTopicId(null)}
-                  className="px-4 py-2 text-sm font-semibold text-[var(--bg)] bg-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle)] flex items-center gap-2 rounded-lg transition"
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[var(--bg)] bg-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle)] flex items-center gap-1.5 rounded-lg transition"
                 >
                   Finish Milestone ✓
                 </button>

@@ -123,26 +123,23 @@ export default function Navbar() {
           </button>
 
           {loading ? (
-            <div className="h-8 w-20 bg-[var(--line)] animate-pulse rounded-full" />
+            <div className="h-8 w-16 bg-[var(--line)] animate-pulse rounded-full" />
           ) : user ? (
-            <div className="flex items-center gap-2">
-              <Link href="/dashboard" className="pill-btn text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Link href="/dashboard" className="pill-btn text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
                 Dashboard
               </Link>
               <button
                 onClick={handleLogout}
                 title="Log Out"
-                className="p-2 rounded-full text-[var(--ink-soft)] hover:text-rose-500 transition"
+                className="hidden sm:inline-flex p-2 rounded-full text-[var(--ink-soft)] hover:text-rose-500 transition"
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <Link href="/login" className="ghost-pill text-xs sm:text-sm px-3 py-1.5 hidden sm:inline-block">
-                Sign In
-              </Link>
-              <Link href="/register" className="pill-btn text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2">
+              <Link href="/register" className="pill-btn text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2">
                 Get Started
               </Link>
             </div>
@@ -154,7 +151,7 @@ export default function Navbar() {
             className="md:hidden p-2 rounded-xl border border-[var(--line)] text-[var(--ink)] bg-[var(--surface)] hover:bg-[var(--bg-alt)] transition"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>

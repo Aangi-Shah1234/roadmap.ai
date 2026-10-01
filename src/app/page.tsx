@@ -16,6 +16,9 @@ import {
   ChevronRight,
   Shield,
   Activity,
+  GitBranch,
+  Clock,
+  Compass,
 } from "lucide-react";
 
 interface SubjectItem {
@@ -61,12 +64,106 @@ function useCounter(target: number, active: boolean, ms = 1200) {
   return val;
 }
 
+interface GraphNode {
+  id: string;
+  label: string;
+  category: string;
+  status: "done" | "active" | "queued";
+  x: number;
+  y: number;
+  color: string;
+  time: string;
+  deliverables: string[];
+  command: string;
+  trackSlug: string;
+}
+
+const GRAPH_NODES: GraphNode[] = [
+  {
+    id: "linux",
+    label: "Linux & OS",
+    category: "Foundation",
+    status: "done",
+    x: 80,
+    y: 190,
+    color: "#7FAE7B",
+    time: "6 hrs",
+    deliverables: ["POSIX Syscalls", "File Descriptors", "Process Management"],
+    command: "strace -c -e trace=process ./main",
+    trackSlug: "devops",
+  },
+  {
+    id: "net",
+    label: "TCP/IP & Networks",
+    category: "Foundation",
+    status: "done",
+    x: 230,
+    y: 190,
+    color: "#7FAE7B",
+    time: "8 hrs",
+    deliverables: ["DNS Resolution", "TLS 1.3 Handshake", "Packet Inspection"],
+    command: "tcpdump -nnvv -i eth0 port 443",
+    trackSlug: "devops",
+  },
+  {
+    id: "docker",
+    label: "Docker & OCI",
+    category: "Containers",
+    status: "active",
+    x: 390,
+    y: 190,
+    color: "#6B82CE",
+    time: "14 hrs",
+    deliverables: ["cgroups & namespaces", "Multi-stage Builds", "Rootless Containers"],
+    command: "docker build --no-cache -t prod/app:v1 .",
+    trackSlug: "devops",
+  },
+  {
+    id: "k8s",
+    label: "Kubernetes Cluster",
+    category: "Orchestration",
+    status: "queued",
+    x: 560,
+    y: 110,
+    color: "#7890DC",
+    time: "22 hrs",
+    deliverables: ["etcd Raft Consensus", "CRDs & Operators", "Ingress Controllers"],
+    command: "kubectl get nodes -o wide --show-labels",
+    trackSlug: "devops",
+  },
+  {
+    id: "cloud",
+    label: "AWS / Cloud Inf",
+    category: "Cloud Ops",
+    status: "queued",
+    x: 560,
+    y: 270,
+    color: "#E8A468",
+    time: "18 hrs",
+    deliverables: ["VPC Subnet Peering", "IAM Role Policies", "ECS Fargate Deployments"],
+    command: "aws sts get-caller-identity",
+    trackSlug: "devops",
+  },
+  {
+    id: "iac",
+    label: "Terraform & IaC",
+    category: "Automation",
+    status: "queued",
+    x: 720,
+    y: 190,
+    color: "#6B82CE",
+    time: "12 hrs",
+    deliverables: ["State Lock with DynamoDB", "Modular Blueprints", "Drift Detection"],
+    command: "terraform plan -out=tfplan.binary",
+    trackSlug: "devops",
+  },
+];
+
 export default function HomePage() {
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCat, setSelectedCat] = useState("ALL");
-  const [activeTab, setActiveTab] = useState<"terminal" | "manifest" | "architecture">("terminal");
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeNodeId, setActiveNodeId] = useState("docker");
   const [copied, setCopied] = useState(false);
   const [countersActive, setCountersActive] = useState(false);
 
@@ -95,281 +192,253 @@ export default function HomePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const activeNode = GRAPH_NODES.find((n) => n.id === activeNodeId) || GRAPH_NODES[2];
   const filtered = selectedCat === "ALL" ? subjects : subjects.filter((s) => s.category === selectedCat);
-
-  const WORKBENCH_STEPS = [
-    { id: 0, tag: "[01]", title: "Linux Kernel & System Calls", status: "DONE", time: "6 hrs", cmd: "strace -c -e trace=network" },
-    { id: 1, tag: "[02]", title: "TCP/IP & Network Architecture", status: "DONE", time: "8 hrs", cmd: "tcpdump -nnvv -i eth0 port 443" },
-    { id: 2, tag: "[03]", title: "Container Runtimes (Docker & OCI)", status: "ACTIVE", time: "14 hrs", cmd: "docker build --no-cache -t app:v1 ." },
-    { id: 3, tag: "[04]", title: "Orchestration & Kubernetes Raft", status: "UPCOMING", time: "20 hrs", cmd: "kubectl get pods -A -o wide" },
-    { id: 4, tag: "[05]", title: "Infrastructure as Code (Terraform)", status: "UPCOMING", time: "12 hrs", cmd: "terraform plan -out=tfplan" },
-  ];
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--ink)] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
       {/* ══════════════════════════════════════════════
-          HERO: THE DEVELOPER COCKPIT / CONSOLE
+          HERO: OPTION A — THE LIVING VISUAL NODE TREE
       ══════════════════════════════════════════════ */}
-      <section className="relative px-4 sm:px-6 lg:px-12 pt-8 sm:pt-14 pb-16 overflow-hidden">
+      <section className="relative px-4 sm:px-6 lg:px-12 pt-6 sm:pt-12 pb-16 overflow-hidden">
         {/* Subtle Tech Grid Background */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.04] dark:opacity-[0.07] bg-[radial-gradient(#6B82CE_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="absolute inset-0 pointer-events-none opacity-[0.04] dark:opacity-[0.08] bg-[radial-gradient(#6B82CE_1px,transparent_1px)] [background-size:24px_24px]" />
 
         {/* Animated Ambient Light Aura */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[380px] bg-gradient-to-tr from-[var(--periwinkle)]/25 via-emerald-500/15 to-transparent rounded-full blur-[110px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-[var(--periwinkle)]/25 via-emerald-500/15 to-transparent rounded-full blur-[110px] pointer-events-none animate-pulse" style={{ animationDuration: '6s' }} />
 
         <div className="max-w-6xl mx-auto relative z-10">
           {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] text-xs font-mono font-medium text-[var(--ink-soft)] mb-6 shadow-sm hover:border-[var(--periwinkle)] transition">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--line)] bg-[var(--surface)] text-xs font-mono font-medium text-[var(--ink-soft)] mb-5 shadow-sm hover:border-[var(--periwinkle)] transition">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="tracking-wide">LIVE TRAJECTORY ENGINE v3.0</span>
+            <span className="tracking-wide">LIVING VISUAL NODE TREE · v3.2</span>
           </div>
 
           {/* Headline */}
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-5 max-w-4xl text-[var(--ink)]">
-            The Engineering Engine for{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--periwinkle-deep)] via-indigo-500 to-[var(--periwinkle)] animate-gradient">
-              High-Velocity
-            </span>{" "}
-            Careers.
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] mb-4 max-w-4xl text-[var(--ink)]">
+            Visualize Your{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--periwinkle-deep)] via-indigo-500 to-[var(--periwinkle)]">
+              Engineering Mastery.
+            </span>
           </h1>
 
-          <p className="text-base sm:text-lg text-[var(--ink-soft)] max-w-2xl leading-relaxed mb-8">
-            Deterministic milestone pathways engineered by principal developers.
-            Zero fluff, production concepts, interactive readers, and verified proof of mastery.
+          <p className="text-sm sm:text-lg text-[var(--ink-soft)] max-w-2xl leading-relaxed mb-6 sm:mb-8">
+            Interactive, milestone-driven skill graphs connecting real production concepts.
+            Tap any node to explore prerequisites, estimated velocity, and hands-on commands.
           </p>
 
-          {/* Quick Launch Buttons */}
-          <div className="flex flex-wrap items-center gap-4 mb-12">
+          {/* Action Row */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8 sm:mb-10">
             <a
               href="#pathways"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--periwinkle-deep)] text-white font-semibold text-sm hover:opacity-90 transition shadow-md hover:shadow-lg hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl bg-[var(--periwinkle-deep)] text-white font-semibold text-xs sm:text-sm hover:opacity-90 transition shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               Explore Pathways <ArrowRight className="w-4 h-4" />
             </a>
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-semibold text-sm hover:bg-[var(--bg-alt)] hover:border-[var(--periwinkle)] transition hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl border border-[var(--line)] bg-[var(--surface)] text-[var(--ink)] font-semibold text-xs sm:text-sm hover:bg-[var(--bg-alt)] hover:border-[var(--periwinkle)] transition hover:-translate-y-0.5"
             >
-              Create Free Account
+              Start Free Trail
             </Link>
           </div>
 
-          {/* ── THE INTERACTIVE WORKBENCH (CENTERPIECE WITH GLOW BORDER) ── */}
-          <div className="relative rounded-2xl p-[1px] bg-gradient-to-b from-[var(--line)] via-[var(--periwinkle)]/30 to-[var(--line)] shadow-2xl">
-            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
-            {/* Top Window Bar */}
-            <div className="flex flex-wrap items-center justify-between border-b border-[var(--line)] px-4 py-2.5 bg-[var(--bg-alt)]/60 gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-rose-400/80 inline-block" />
-                <span className="w-3 h-3 rounded-full bg-amber-400/80 inline-block" />
-                <span className="w-3 h-3 rounded-full bg-emerald-400/80 inline-block" />
-                <span className="ml-2 text-xs font-mono text-[var(--ink-soft)] font-medium hidden sm:inline">
-                  roadmap-cli // devops-core
+          {/* ── THE LIVING VISUAL GRAPH CANVAS (THE SHOWSTOPPER) ── */}
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-2xl p-4 sm:p-6 relative overflow-hidden">
+            {/* Top Toolbar */}
+            <div className="flex flex-wrap items-center justify-between pb-4 mb-4 border-b border-[var(--line)] gap-2">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-[var(--ink)]">
+                <GitBranch className="w-4 h-4 text-[var(--periwinkle-deep)]" />
+                <span>TRAJECTORY_GRAPH // DEVOPS_ENGINEERING</span>
+              </div>
+              <div className="flex items-center gap-3 text-[11px] font-mono text-[var(--ink-soft)]">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Completed
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[var(--periwinkle-deep)] animate-pulse" /> Active Node
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[var(--line)] border border-[var(--ink-soft)]" /> Queued
                 </span>
               </div>
-
-              {/* Tabs */}
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setActiveTab("terminal")}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition flex items-center gap-1.5 ${
-                    activeTab === "terminal"
-                      ? "bg-[var(--surface)] text-[var(--ink)] font-semibold shadow-xs"
-                      : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-                  }`}
-                >
-                  <Terminal className="w-3 h-3" />
-                  session.sh
-                </button>
-                <button
-                  onClick={() => setActiveTab("manifest")}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition flex items-center gap-1.5 ${
-                    activeTab === "manifest"
-                      ? "bg-[var(--surface)] text-[var(--ink)] font-semibold shadow-xs"
-                      : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-                  }`}
-                >
-                  <Code2 className="w-3 h-3" />
-                  Dockerfile
-                </button>
-                <button
-                  onClick={() => setActiveTab("architecture")}
-                  className={`px-3 py-1 rounded-md text-xs font-mono transition flex items-center gap-1.5 ${
-                    activeTab === "architecture"
-                      ? "bg-[var(--surface)] text-[var(--ink)] font-semibold shadow-xs"
-                      : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-                  }`}
-                >
-                  <Layers className="w-3 h-3" />
-                  architecture.json
-                </button>
-              </div>
             </div>
 
-            {/* Split Screen Content */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[var(--line)]">
-              {/* Left Pane: Interactive Milestone Stream (7 cols) */}
-              <div className="lg:col-span-6 p-4 sm:p-6 bg-[var(--surface)] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-mono text-[var(--ink-soft)] font-semibold uppercase tracking-wider">
-                      Interactive Pathway Stream
-                    </span>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium">
-                      TRACK: DEVOPS
-                    </span>
-                  </div>
+            {/* SVG Visual Node Graph (Fluidly scales on any screen) */}
+            <div className="w-full bg-[var(--bg)]/70 rounded-xl border border-[var(--line)] p-2 sm:p-4 relative">
+              <svg
+                viewBox="0 0 800 380"
+                className="w-full h-auto max-h-[380px] select-none"
+              >
+                <defs>
+                  {/* Glowing filter */}
+                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <linearGradient id="gradPath" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#7FAE7B" />
+                    <stop offset="50%" stopColor="#6B82CE" />
+                    <stop offset="100%" stopColor="#E8A468" />
+                  </linearGradient>
+                </defs>
 
-                  {/* Step List */}
-                  <div className="space-y-2.5">
-                    {WORKBENCH_STEPS.map((s) => {
-                      const isSelected = activeStep === s.id;
-                      return (
-                        <div
-                          key={s.id}
-                          onClick={() => setActiveStep(s.id)}
-                          className={`p-3 rounded-xl border text-left cursor-pointer transition flex items-center justify-between ${
-                            isSelected
-                              ? "border-[var(--periwinkle-deep)] bg-[var(--periwinkle)]/10 shadow-xs"
-                              : "border-[var(--line)] hover:border-[var(--periwinkle)]/50 bg-[var(--bg)]/50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <span className="font-mono text-xs font-bold text-[var(--periwinkle-deep)]">
-                              {s.tag}
-                            </span>
-                            <div className="truncate">
-                              <p className="text-xs sm:text-sm font-semibold text-[var(--ink)] truncate">
-                                {s.title}
-                              </p>
-                              <p className="text-[11px] font-mono text-[var(--ink-soft)]">
-                                {s.time} · {s.cmd}
-                              </p>
-                            </div>
-                          </div>
+                {/* Connecting Connecting Paths */}
+                {/* Linux -> Net */}
+                <line x1="80" y1="190" x2="230" y2="190" stroke="#7FAE7B" strokeWidth="3" strokeDasharray="4 4" />
+                {/* Net -> Docker */}
+                <line x1="230" y1="190" x2="390" y2="190" stroke="#6B82CE" strokeWidth="3.5" />
+                {/* Docker -> K8s */}
+                <path d="M 390 190 C 460 190, 480 110, 560 110" fill="none" stroke="#6B82CE" strokeWidth="2.5" />
+                {/* Docker -> Cloud */}
+                <path d="M 390 190 C 460 190, 480 270, 560 270" fill="none" stroke="#E8A468" strokeWidth="2.5" />
+                {/* K8s -> IaC */}
+                <path d="M 560 110 C 630 110, 650 190, 720 190" fill="none" stroke="#7890DC" strokeWidth="2.5" strokeDasharray="5 5" />
+                {/* Cloud -> IaC */}
+                <path d="M 560 270 C 630 270, 650 190, 720 190" fill="none" stroke="#E8A468" strokeWidth="2.5" strokeDasharray="5 5" />
 
-                          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                            {s.status === "DONE" && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                                DONE
-                              </span>
-                            )}
-                            {s.status === "ACTIVE" && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[var(--periwinkle-deep)] text-white">
-                                ACTIVE
-                              </span>
-                            )}
-                            {s.status === "UPCOMING" && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[var(--bg-alt)] text-[var(--ink-soft)] border border-[var(--line)]">
-                                QUEUED
-                              </span>
-                            )}
-                            <ChevronRight className="w-4 h-4 text-[var(--ink-soft)]" />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                {/* Graph Nodes */}
+                {GRAPH_NODES.map((node) => {
+                  const isSelected = activeNodeId === node.id;
+                  return (
+                    <g
+                      key={node.id}
+                      onClick={() => setActiveNodeId(node.id)}
+                      className="cursor-pointer transition-transform hover:scale-105"
+                    >
+                      {/* Outer pulse ring for active node */}
+                      {node.status === "active" && (
+                        <circle
+                          cx={node.x}
+                          cy={node.y}
+                          r="32"
+                          fill="none"
+                          stroke={node.color}
+                          strokeWidth="2"
+                          opacity="0.6"
+                          className="animate-ping"
+                          style={{ transformOrigin: `${node.x}px ${node.y}px` }}
+                        />
+                      )}
 
-                {/* Bottom Stream Status */}
-                <div className="mt-4 pt-3 border-t border-[var(--line)] flex items-center justify-between text-xs font-mono text-[var(--ink-soft)]">
-                  <span>Selected: {WORKBENCH_STEPS[activeStep].title}</span>
-                  <Link
-                    href="/roadmap/devops"
-                    className="text-[var(--periwinkle-deep)] font-semibold hover:underline inline-flex items-center gap-1"
-                  >
-                    Open Live Trail <ArrowRight className="w-3 h-3" />
-                  </Link>
-                </div>
-              </div>
+                      {/* Main Node Circle */}
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={isSelected ? 26 : 22}
+                        fill="var(--surface)"
+                        stroke={node.color}
+                        strokeWidth={isSelected ? "4" : "3"}
+                        filter={isSelected ? "url(#glow)" : undefined}
+                      />
 
-              {/* Right Pane: Code / Terminal View (5 cols) */}
-              <div className="lg:col-span-6 p-4 sm:p-6 bg-[#0E111A] text-slate-200 font-mono text-xs overflow-x-auto min-h-[300px] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 text-slate-400">
-                    <span className="flex items-center gap-1.5">
-                      <Terminal className="w-3.5 h-3.5 text-cyan-400" />
-                      <span>{activeTab === "terminal" ? "bash ~ roadmap" : activeTab === "manifest" ? "Dockerfile" : "arch.json"}</span>
-                    </span>
-                    <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      SYNTAX: VERIFIED
-                    </span>
-                  </div>
+                      {/* Inner Status Indicator */}
+                      {node.status === "done" && (
+                        <circle cx={node.x} cy={node.y} r="10" fill="#7FAE7B" />
+                      )}
+                      {node.status === "active" && (
+                        <circle cx={node.x} cy={node.y} r="10" fill="#6B82CE" />
+                      )}
+                      {node.status === "queued" && (
+                        <circle cx={node.x} cy={node.y} r="6" fill="var(--ink-soft)" opacity="0.4" />
+                      )}
 
-                  {activeTab === "terminal" && (
-                    <div className="space-y-1.5 text-slate-300">
-                      <p className="text-slate-500"># Current Milestone Execution</p>
-                      <p>
-                        <span className="text-cyan-400">$</span> roadmap track devops --step={activeStep + 1}
-                      </p>
-                      <p className="text-emerald-400">✔ Loading verified learning curriculum...</p>
-                      <p className="text-slate-400">
-                        → Concept: <span className="text-white">{WORKBENCH_STEPS[activeStep].title}</span>
-                      </p>
-                      <p className="text-slate-400">
-                        → Verification Command: <span className="text-amber-300">{WORKBENCH_STEPS[activeStep].cmd}</span>
-                      </p>
-                      <p className="text-slate-400">
-                        → Estimated Velocity: <span className="text-purple-300">{WORKBENCH_STEPS[activeStep].time}</span>
-                      </p>
-                      <div className="mt-3 p-2.5 rounded bg-slate-900 border border-slate-800 text-[11px]">
-                        <p className="text-cyan-300 font-semibold mb-1">Production Challenge:</p>
-                        <p className="text-slate-300">
-                          Configure multi-stage container build with scratch base image. Reduce footprint by 84%.
-                        </p>
-                      </div>
-                    </div>
-                  )}
+                      {/* Node Label Text */}
+                      <text
+                        x={node.x}
+                        y={node.y > 190 ? node.y + 36 : node.y - 32}
+                        textAnchor="middle"
+                        fill="var(--ink)"
+                        fontSize="12"
+                        fontFamily="monospace"
+                        fontWeight="bold"
+                      >
+                        {node.label}
+                      </text>
 
-                  {activeTab === "manifest" && (
-                    <div className="space-y-1 text-slate-300">
-                      <p><span className="text-purple-400">FROM</span> golang:1.24-alpine <span className="text-purple-400">AS</span> builder</p>
-                      <p><span className="text-purple-400">WORKDIR</span> /app</p>
-                      <p><span className="text-purple-400">COPY</span> go.mod go.sum ./</p>
-                      <p><span className="text-purple-400">RUN</span> go mod download</p>
-                      <p><span className="text-purple-400">COPY</span> . .</p>
-                      <p><span className="text-purple-400">RUN</span> CGO_ENABLED=0 GOOS=linux go build -o main .</p>
-                      <p className="text-slate-500 pt-2"># Multi-stage minimal production layer</p>
-                      <p><span className="text-purple-400">FROM</span> gcr.io/distroless/static-debian12</p>
-                      <p><span className="text-purple-400">COPY</span> --from=builder /app/main /main</p>
-                      <p><span className="text-purple-400">ENTRYPOINT</span> [&quot;/main&quot;]</p>
-                    </div>
-                  )}
+                      {/* Sub-label Category */}
+                      <text
+                        x={node.x}
+                        y={node.y > 190 ? node.y + 48 : node.y - 18}
+                        textAnchor="middle"
+                        fill="var(--ink-soft)"
+                        fontSize="9"
+                        fontFamily="monospace"
+                      >
+                        [{node.category}]
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
 
-                  {activeTab === "architecture" && (
-                    <div className="space-y-1 text-slate-300">
-                      <p>{`{`}</p>
-                      <p className="pl-4"><span className="text-cyan-300">&quot;track&quot;</span>: <span className="text-amber-300">&quot;DevOps Engineering&quot;</span>,</p>
-                      <p className="pl-4"><span className="text-cyan-300">&quot;milestones_total&quot;</span>: <span className="text-purple-300">7</span>,</p>
-                      <p className="pl-4"><span className="text-cyan-300">&quot;topics_total&quot;</span>: <span className="text-purple-300">40</span>,</p>
-                      <p className="pl-4"><span className="text-cyan-300">&quot;status&quot;</span>: <span className="text-emerald-400">&quot;PRODUCTION_READY&quot;</span>,</p>
-                      <p className="pl-4"><span className="text-cyan-300">&quot;verification&quot;</span>: <span className="text-amber-300">&quot;100%_MERKLE_CERTIFICATE&quot;</span></p>
-                      <p>{`}`}</p>
-                    </div>
-                  )}
-                </div>
+            {/* Mobile Node Selector Pills (Quick touch target for phone users) */}
+            <div className="flex sm:hidden overflow-x-auto gap-2 py-3 mt-2 border-b border-[var(--line)]">
+              {GRAPH_NODES.map((n) => (
+                <button
+                  key={n.id}
+                  onClick={() => setActiveNodeId(n.id)}
+                  className={`px-3 py-1 rounded-full text-xs font-mono font-bold whitespace-nowrap transition ${
+                    activeNodeId === n.id
+                      ? "bg-[var(--periwinkle-deep)] text-white"
+                      : "border border-[var(--line)] text-[var(--ink-soft)] bg-[var(--bg)]"
+                  }`}
+                >
+                  {n.label}
+                </button>
+              ))}
+            </div>
 
-                <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                  <span className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    Container Ready
+            {/* ── INTERACTIVE NODE INSPECTION PANEL ── */}
+            <div className="mt-4 p-4 sm:p-5 rounded-xl border border-[var(--line)] bg-[var(--surface)] shadow-sm grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+              <div className="md:col-span-4 border-b md:border-b-0 md:border-r border-[var(--line)] pb-3 md:pb-0 md:pr-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider" style={{ background: `${activeNode.color}20`, color: activeNode.color }}>
+                    {activeNode.category}
                   </span>
-                  <Link
-                    href={`/roadmap/devops`}
-                    className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-semibold"
-                  >
-                    Start Milestone <ArrowRight className="w-3 h-3" />
-                  </Link>
+                  <span className="text-xs font-mono text-[var(--ink-soft)] flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> {activeNode.time}
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-[var(--ink)]">{activeNode.label}</h3>
+                <p className="text-xs text-[var(--ink-soft)] mt-1">
+                  Status: <strong className="uppercase" style={{ color: activeNode.color }}>{activeNode.status}</strong>
+                </p>
+              </div>
+
+              <div className="md:col-span-5 border-b md:border-b-0 md:border-r border-[var(--line)] pb-3 md:pb-0 md:pr-4">
+                <span className="text-[11px] font-mono font-bold uppercase text-[var(--ink-soft)] block mb-1">
+                  Production Deliverables:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {activeNode.deliverables.map((d, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-0.5 rounded-md text-[11px] font-medium border border-[var(--line)] bg-[var(--bg)] text-[var(--ink)]"
+                    >
+                      ✓ {d}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-2 text-[11px] font-mono text-slate-400 bg-slate-900 px-2 py-1 rounded truncate">
+                  <span className="text-cyan-400">$</span> {activeNode.command}
                 </div>
               </div>
-            </div>
+
+              <div className="md:col-span-3 flex flex-col justify-center gap-2">
+                <Link
+                  href={`/roadmap/${activeNode.trackSlug}`}
+                  className="w-full py-2.5 px-4 rounded-xl bg-[var(--periwinkle-deep)] text-white text-xs font-bold text-center hover:opacity-90 transition shadow-xs flex items-center justify-center gap-1.5"
+                >
+                  Launch Milestone <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

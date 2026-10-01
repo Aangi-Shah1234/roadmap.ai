@@ -208,23 +208,25 @@ export default function DashboardPage() {
                 const colors = ['bg-[var(--periwinkle)]', 'bg-[var(--sage)]', 'bg-[var(--peach)]'];
                 const colorClass = colors[i % colors.length];
                 return (
-                  <div key={sub.id} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 flex gap-6 shadow-sm hover:border-[var(--periwinkle)] transition-colors">
-                    <div className={`track-accent-bar ${colorClass}`}></div>
-                    <div className="flex-1">
-                      <div className="flex gap-2 items-center mb-2">
-                        <span className="text-[10px] font-bold px-2 py-1 bg-[var(--line)] rounded text-[var(--ink-soft)] uppercase">{sub.category}</span>
-                      </div>
-                      <h3 className="font-display text-xl font-bold mb-3 text-[var(--ink)]">{sub.title}</h3>
-                      <div className="flex items-center gap-4 text-xs font-semibold text-[var(--ink-soft)] mb-2">
-                        <span>{sub.completedCount} / {sub.topicsCount} completed</span>
-                        <span>{sub.progressPercent}%</span>
-                      </div>
-                      <div className="w-full bg-[var(--line)] h-1.5 rounded-full">
-                        <div className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" style={{ width: `${sub.progressPercent}%` }}></div>
+                  <div key={sub.id} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 shadow-sm hover:border-[var(--periwinkle)] transition-colors">
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className={`track-accent-bar ${colorClass} self-stretch min-h-[50px]`}></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex gap-2 items-center mb-1.5 flex-wrap">
+                          <span className="text-[10px] font-bold px-2 py-0.5 bg-[var(--line)] rounded text-[var(--ink-soft)] uppercase">{sub.category}</span>
+                        </div>
+                        <h3 className="font-display text-lg sm:text-xl font-bold mb-2 text-[var(--ink)] truncate">{sub.title}</h3>
+                        <div className="flex items-center gap-3 text-xs font-semibold text-[var(--ink-soft)] mb-2">
+                          <span>{sub.completedCount} / {sub.topicsCount} completed</span>
+                          <span>{sub.progressPercent}%</span>
+                        </div>
+                        <div className="w-full bg-[var(--line)] h-1.5 rounded-full overflow-hidden">
+                          <div className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" style={{ width: `${sub.progressPercent}%` }}></div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex flex-col justify-center gap-3 border-l border-[var(--line)] pl-6 min-w-[180px]">
-                      <Link href={`/roadmap/${sub.slug}`} className="text-xs font-bold px-4 py-2 bg-[var(--periwinkle-deep)] text-white rounded-lg flex items-center justify-center text-center hover:opacity-90 transition">
+                    <div className="flex items-center sm:justify-center border-t sm:border-t-0 sm:border-l border-[var(--line)] pt-3 sm:pt-0 sm:pl-6 sm:min-w-[170px]">
+                      <Link href={`/roadmap/${sub.slug}`} className="w-full text-xs font-bold px-4 py-2.5 bg-[var(--periwinkle-deep)] text-white rounded-xl flex items-center justify-center text-center hover:opacity-90 transition shadow-xs">
                         Continue Trail &rarr;
                       </Link>
                     </div>
@@ -249,25 +251,27 @@ export default function DashboardPage() {
                 const colors = ['bg-[var(--periwinkle)]', 'bg-[var(--sage)]', 'bg-[var(--peach)]'];
                 const colorClass = colors[i % colors.length];
                 return (
-                  <div key={sub.id} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 flex gap-6 shadow-sm hover:border-[var(--periwinkle)] transition-colors">
-                    <div className={`track-accent-bar ${colorClass}`}></div>
-                    <div className="flex-1">
-                      <div className="flex gap-2 items-center mb-2">
-                        <span className="text-[10px] font-bold px-2 py-1 bg-[var(--line)] rounded text-[var(--ink-soft)] uppercase">{sub.category}</span>
-                        <span className="text-[10px] text-[var(--ink-soft)]">{sub.milestonesCount} milestones · {sub.topicsCount} topics</span>
-                      </div>
-                      <h3 className="font-display text-xl font-bold mb-3 text-[var(--ink)]">{sub.title}</h3>
-                      <p className="text-sm text-[var(--ink-soft)] mb-3 line-clamp-1">{sub.description}</p>
-                      <div className="flex items-center gap-4 text-xs font-semibold text-[var(--ink-soft)] mb-2">
-                        <span>{sub.completedCount} / {sub.topicsCount} completed</span>
-                        <span>{sub.progressPercent}%</span>
-                      </div>
-                      <div className="w-full bg-[var(--line)] h-1.5 rounded-full">
-                        <div className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" style={{ width: `${sub.progressPercent}%` }}></div>
+                  <div key={sub.id} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 shadow-sm hover:border-[var(--periwinkle)] transition-colors">
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className={`track-accent-bar ${colorClass} self-stretch min-h-[50px]`}></div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex gap-2 items-center mb-1.5 flex-wrap">
+                          <span className="text-[10px] font-bold px-2 py-0.5 bg-[var(--line)] rounded text-[var(--ink-soft)] uppercase">{sub.category}</span>
+                          <span className="text-[10px] text-[var(--ink-soft)]">{sub.milestonesCount} milestones · {sub.topicsCount} topics</span>
+                        </div>
+                        <h3 className="font-display text-lg sm:text-xl font-bold mb-2 text-[var(--ink)] truncate">{sub.title}</h3>
+                        <p className="text-xs sm:text-sm text-[var(--ink-soft)] mb-3 line-clamp-1">{sub.description}</p>
+                        <div className="flex items-center gap-3 text-xs font-semibold text-[var(--ink-soft)] mb-2">
+                          <span>{sub.completedCount} / {sub.topicsCount} completed</span>
+                          <span>{sub.progressPercent}%</span>
+                        </div>
+                        <div className="w-full bg-[var(--line)] h-1.5 rounded-full overflow-hidden">
+                          <div className="bg-[var(--periwinkle-deep)] h-1.5 rounded-full" style={{ width: `${sub.progressPercent}%` }}></div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex flex-col justify-center gap-3 border-l border-[var(--line)] pl-6 min-w-[180px]">
-                      <Link href={`/roadmap/${sub.slug}`} className="text-xs font-bold px-4 py-2 bg-[var(--periwinkle-deep)] text-white rounded-lg flex items-center justify-center text-center hover:opacity-90 transition">
+                    <div className="flex items-center sm:justify-center border-t sm:border-t-0 sm:border-l border-[var(--line)] pt-3 sm:pt-0 sm:pl-6 sm:min-w-[170px]">
+                      <Link href={`/roadmap/${sub.slug}`} className="w-full text-xs font-bold px-4 py-2.5 bg-[var(--periwinkle-deep)] text-white rounded-xl flex items-center justify-center text-center hover:opacity-90 transition shadow-xs">
                         Open Trail &rarr;
                       </Link>
                     </div>
