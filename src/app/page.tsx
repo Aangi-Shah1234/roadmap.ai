@@ -86,7 +86,6 @@ export default function HomePage() {
   const [subjects, setSubjects]         = useState<SubjectItem[]>([]);
   const [loading, setLoading]           = useState(true);
   const [selectedCat, setSelectedCat]   = useState("All");
-  const [hoveredId, setHoveredId]       = useState<string | null>(null);
   const [heroReady, setHeroReady]       = useState(false);
   const [countersActive, setCountersActive] = useState(false);
 
@@ -258,42 +257,40 @@ export default function HomePage() {
               ? [1,2,3,4].map(n => <div key={n} className="lp2-track-skeleton" />)
               : filtered.map((sub, i) => {
                   const a = accentFor(sub.category);
-                  const hov = hoveredId === sub.id;
                   return (
                     <Link
                       key={sub.id}
                       href={`/roadmap/${sub.slug}`}
-                      className="lp2-track-row"
-                      onMouseEnter={() => setHoveredId(sub.id)}
-                      onMouseLeave={() => setHoveredId(null)}
-                      style={{ backgroundColor: hov ? a.rowBg : "transparent" }}
+                      className="lp2-track-card"
+                      style={{ borderLeftColor: a.dot }}
                     >
-                      <span className="lp2-row-idx">{String(i + 1).padStart(2, "0")}</span>
-                      <span className="lp2-row-dot" style={{ background: a.dot }} />
-                      <div className="lp2-row-content">
-                        <div className="lp2-row-top">
-                          <span className="lp2-row-name">{sub.title}</span>
-                          <span className="lp2-row-meta">
-                            {sub.milestonesCount} milestones&nbsp;&middot;&nbsp;{sub.topicsCount} topics
+                      <span className="lp2-card-idx" style={{ color: a.dot }}>
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div className="lp2-card-body">
+                        <div className="lp2-card-title-row">
+                          <span className="lp2-card-name">{sub.title}</span>
+                          <span className="lp2-cat-pill" style={{ background: a.rowBg, color: a.label }}>
+                            {sub.category}
                           </span>
                         </div>
-                        <p className="lp2-row-desc">{sub.description}</p>
+                        <p className="lp2-card-desc">{sub.description}</p>
                         {sub.progressPercent > 0 && (
-                          <div className="lp2-row-prog">
-                            <div
-                              className="lp2-row-prog-fill"
-                              style={{ width: `${sub.progressPercent}%`, background: a.dot }}
-                            />
-                            <span className="lp2-row-prog-label" style={{ color: a.label }}>
-                              {sub.progressPercent}%
-                            </span>
+                          <div className="lp2-row-prog" style={{ marginTop: "8px" }}>
+                            <div className="lp2-row-prog-fill" style={{ width: `${sub.progressPercent}%`, background: a.dot }} />
+                            <span className="lp2-row-prog-label" style={{ color: a.label }}>{sub.progressPercent}%</span>
                           </div>
                         )}
                       </div>
-                      <ArrowRight
-                        className="lp2-row-arrow w-5 h-5 flex-shrink-0"
-                        style={{ color: hov ? a.label : "var(--ink-soft)" }}
-                      />
+                      <div className="lp2-card-chips">
+                        <span className="lp2-chip" style={{ borderColor: a.dot, color: a.label }}>
+                          {sub.milestonesCount} milestones
+                        </span>
+                        <span className="lp2-chip" style={{ borderColor: "var(--sage-deep)", color: "var(--sage-deep)" }}>
+                          {sub.topicsCount} topics
+                        </span>
+                      </div>
+                      <ArrowRight className="lp2-card-arrow w-5 h-5 flex-shrink-0" style={{ color: a.dot }} />
                     </Link>
                   );
                 })}
