@@ -3,21 +3,20 @@ import { createClient } from "@libsql/client";
 import * as schema from "./schema";
 
 const defaultDbPath = process.env.VERCEL ? "file:/tmp/roadmap.db" : "file:roadmap.db";
-const url =
-  process.env.DATABASE_URL ||
-  process.env.TURSO_DATABASE_URL ||
-  process.env.TURSO_URL ||
-  process.env.STORAGE_URL ||
-  defaultDbPath;
 
-const authToken =
-  process.env.DATABASE_AUTH_TOKEN ||
-  process.env.TURSO_AUTH_TOKEN ||
-  process.env.STORAGE_AUTH_TOKEN;
+// Clean quotes if copied with quotes into env vars
+const rawTursoUrl = (process.env.TURSO_DATABASE_URL || process.env.TURSO_URL || "").replace(/^["']|["']$/g, "").trim();
+const rawTursoToken = (process.env.TURSO_AUTH_TOKEN || "").replace(/^["']|["']$/g, "").trim();
+const rawDbUrl = (process.env.DATABASE_URL || process.env.STORAGE_URL || "").replace(/^["']|["']$/g, "").trim();
+const rawDbToken = (process.env.DATABASE_AUTH_TOKEN || process.env.STORAGE_AUTH_TOKEN || "").replace(/^["']|["']$/g, "").trim();
+
+// Prioritize Turso cloud connection
+const url = rawTursoUrl || rawDbUrl || defaultDbPath;
+const authToken = rawTursoUrl ? rawTursoToken : (rawDbToken || rawTursoToken);
 
 const client = createClient({
   url,
-  authToken,
+  authToken: authToken || undefined,
 });
 
 export const db = drizzle(client, { schema });
