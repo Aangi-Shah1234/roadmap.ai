@@ -17,8 +17,13 @@ import {
   Settings,
   LogOut,
   Map,
-  TrendingUp
+  TrendingUp,
+  Sun,
+  Moon,
+  Check,
+  Palette,
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 interface SubjectProgress {
   id: string;
@@ -47,7 +52,8 @@ export default function DashboardPage() {
   const [subjects, setSubjects] = useState<SubjectProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [certTrack, setCertTrack] = useState<SubjectProgress | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "tracks" | "progress" | "certificates">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "tracks" | "progress" | "certificates" | "settings">("overview");
+  const { theme, setThemeMode } = useTheme();
   const router = useRouter();
 
   useEffect(() => {
@@ -149,7 +155,16 @@ export default function DashboardPage() {
         </div>
         
         <div className="dash-nav mt-3 sm:mt-auto pt-3 border-t sm:border-t-0 border-[var(--line)]">
-          <button onClick={() => setActiveTab("overview")} className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-[var(--ink-soft)] hover:bg-[var(--bg)] rounded-lg text-left w-full"><Settings className="w-4 h-4" /> Settings</button>
+          <button
+            onClick={() => setActiveTab("settings")}
+            className={`flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg text-left w-full transition ${
+              activeTab === "settings"
+                ? "active bg-[var(--periwinkle)]/15 text-[var(--periwinkle-deep)] font-bold"
+                : "text-[var(--ink-soft)] hover:bg-[var(--bg)]"
+            }`}
+          >
+            <Settings className="w-4 h-4" /> Settings
+          </button>
           <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-rose-500 hover:bg-rose-50 rounded-lg text-left w-full">
             <LogOut className="w-4 h-4" /> Logout
           </button>
@@ -360,6 +375,115 @@ export default function DashboardPage() {
               ))}
             </div>
           </>
+        )}
+
+        {/* SETTINGS TAB */}
+        {activeTab === "settings" && (
+          <div className="max-w-2xl">
+            <h2 className="font-display text-2xl font-bold text-[var(--ink)] mb-1">Settings</h2>
+            <p className="text-sm text-[var(--ink-soft)] mb-6">Manage your workspace preferences and appearance</p>
+
+            <div className="space-y-6">
+              {/* Appearance / Color Theme Card */}
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <Palette className="w-5 h-5 text-[var(--periwinkle-deep)]" />
+                  <h3 className="font-bold text-base text-[var(--ink)]">Color Theme</h3>
+                </div>
+                <p className="text-xs text-[var(--ink-soft)] mb-5">
+                  Select your interface appearance preference. Changes apply instantly across the entire platform.
+                </p>
+
+                {/* Theme Selector Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Light Theme Card */}
+                  <div
+                    onClick={() => setThemeMode("light")}
+                    className={`cursor-pointer rounded-xl border-2 p-4 transition-all ${
+                      theme === "light"
+                        ? "border-[var(--periwinkle-deep)] bg-[var(--periwinkle)]/5 shadow-sm"
+                        : "border-[var(--line)] hover:border-[var(--ink-soft)] bg-[var(--bg)]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2 font-bold text-sm text-[var(--ink)]">
+                        <Sun className="w-4 h-4 text-amber-500" />
+                        <span>Light Theme</span>
+                      </div>
+                      {theme === "light" && <Check className="w-4 h-4 text-[var(--periwinkle-deep)]" />}
+                    </div>
+                    {/* Visual Preview */}
+                    <div className="h-16 rounded-lg bg-[#F7F6FC] border border-[#E6E2F2] p-2 flex flex-col justify-between">
+                      <div className="flex gap-1.5">
+                        <div className="w-8 h-2 rounded bg-[#8FA3E3]" />
+                        <div className="w-12 h-2 rounded bg-[#E6E2F2]" />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="w-14 h-3 rounded bg-white border border-[#E6E2F2]" />
+                        <div className="w-4 h-4 rounded-full bg-[#A8C9A5]" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[var(--ink-soft)] mt-2 font-medium">
+                      Soft off-white canvas with pastel periwinkle &amp; sage accents.
+                    </p>
+                  </div>
+
+                  {/* Dark Theme Card */}
+                  <div
+                    onClick={() => setThemeMode("dark")}
+                    className={`cursor-pointer rounded-xl border-2 p-4 transition-all ${
+                      theme === "dark"
+                        ? "border-[var(--periwinkle-deep)] bg-[var(--periwinkle)]/5 shadow-sm"
+                        : "border-[var(--line)] hover:border-[var(--ink-soft)] bg-[var(--bg)]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2 font-bold text-sm text-[var(--ink)]">
+                        <Moon className="w-4 h-4 text-cyan-400" />
+                        <span>Dark Theme</span>
+                      </div>
+                      {theme === "dark" && <Check className="w-4 h-4 text-[var(--periwinkle-deep)]" />}
+                    </div>
+                    {/* Visual Preview */}
+                    <div className="h-16 rounded-lg bg-[#0D0F18] border border-[#222638] p-2 flex flex-col justify-between">
+                      <div className="flex gap-1.5">
+                        <div className="w-8 h-2 rounded bg-[#7890DC]" />
+                        <div className="w-12 h-2 rounded bg-[#222638]" />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div className="w-14 h-3 rounded bg-[#161824] border border-[#222638]" />
+                        <div className="w-4 h-4 rounded-full bg-[#7FAE7B]" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-[var(--ink-soft)] mt-2 font-medium">
+                      Obsidian dark background with high-contrast glowing neon details.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Profile Card */}
+              <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 shadow-sm">
+                <h3 className="font-bold text-base text-[var(--ink)] mb-4">Account Profile</h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between py-2 border-b border-[var(--line)]">
+                    <span className="text-[var(--ink-soft)]">Full Name</span>
+                    <span className="font-semibold text-[var(--ink)]">{user.name}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-[var(--line)]">
+                    <span className="text-[var(--ink-soft)]">Email Address</span>
+                    <span className="font-semibold text-[var(--ink)]">{user.email}</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-[var(--ink-soft)]">Role</span>
+                    <span className="font-semibold uppercase tracking-wider text-xs px-2.5 py-0.5 rounded bg-[var(--line)] text-[var(--ink-soft)] font-mono">
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       
