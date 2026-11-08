@@ -148,7 +148,7 @@ export async function POST(req: Request) {
     console.error("Login error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to log in" },
-      { status: 500 }
+      { status: 400 }
     );
   }
 }

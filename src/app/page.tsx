@@ -131,16 +131,14 @@ export default function HomePage() {
 
           {/* Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-5 max-w-4xl text-[var(--ink)]">
-            The Engineering Engine for{" "}
+            Learn Tech from Scratch,{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--periwinkle-deep)] via-indigo-500 to-[var(--periwinkle)] animate-gradient">
-              High-Velocity
-            </span>{" "}
-            Careers.
+              Step by Step.
+            </span>
           </h1>
 
           <p className="text-base sm:text-lg text-[var(--ink-soft)] max-w-2xl leading-relaxed mb-8">
-            Deterministic milestone pathways engineered by principal developers.
-            Zero fluff, production concepts, interactive readers, and verified proof of mastery.
+            Easy-to-follow roadmaps with interactive lessons and progress tracking. No prior experience required — anyone can learn.
           </p>
 
           {/* Quick Launch Buttons */}

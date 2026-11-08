@@ -1,8 +1,29 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 import * as schema from "./schema";
+import fs from "fs";
+import path from "path";
 
-const defaultDbPath = process.env.VERCEL ? "file:/tmp/roadmap.db" : "file:roadmap.db";
+const isServerless = Boolean(
+  process.env.VERCEL ||
+  process.env.CATALYST_ENV ||
+  process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  process.platform === "linux"
+);
+
+let defaultDbPath = "file:roadmap.db";
+if (isServerless) {
+  const tmpDbPath = "/tmp/roadmap.db";
+  try {
+    const bundledDb = path.join(process.cwd(), "roadmap.db");
+    if (fs.existsSync(bundledDb) && !fs.existsSync(tmpDbPath)) {
+      fs.copyFileSync(bundledDb, tmpDbPath);
+    }
+  } catch (e) {
+    console.error("Failed to copy bundled db to /tmp:", e);
+  }
+  defaultDbPath = "file:/tmp/roadmap.db";
+}
 
 // Clean quotes if copied with quotes into env vars
 const rawTursoUrl = (process.env.TURSO_DATABASE_URL || process.env.TURSO_URL || "").replace(/^["']|["']$/g, "").trim();
