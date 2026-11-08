@@ -4,12 +4,14 @@ jobs:
   testJob:
     steps:
       - echo "Installing dependencies"
-      - npm ci
+      - npm install
       - echo "Running automated tests"
       - npm test
 
   buildJob:
     steps:
+      - echo "Installing dependencies"
+      - npm install
       - echo "Building Next.js application"
       - npm run build
 
