@@ -1,153 +1,132 @@
-<div align="center">
+# Roadmap AI
 
-# Roadmap.ai
+An interactive web application designed to help anyone learn modern software engineering skills step by step.
 
-**Learn Tech from Scratch, Step by Step.**
-
-*Easy-to-follow roadmaps with interactive lessons and progress tracking. No prior experience required — anyone can learn.*
-
-[![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Zoho Catalyst Slate](https://img.shields.io/badge/Zoho_Catalyst-Slate_Full--Stack-0070F3?style=for-the-badge&logo=zoho&logoColor=white)](https://catalyst.zoho.com/)
-[![Catalyst Data Store](https://img.shields.io/badge/Catalyst-Data_Store-009688?style=for-the-badge&logo=databricks&logoColor=white)](https://catalyst.zoho.com/)
-[![Catalyst Pipelines](https://img.shields.io/badge/DevOps-Catalyst_Pipelines-FF6F00?style=for-the-badge&logo=githubactions&logoColor=white)](https://catalyst.zoho.com/)
-
-[**🌐 Live Application**](https://roadmap-ai-ashah.onslate.in) · [**🔐 Admin Portal**](https://roadmap-ai-ashah.onslate.in/login?role=admin) · [**🎓 Learner Portal**](https://roadmap-ai-ashah.onslate.in/login)
-
-</div>
+- **Live Website:** https://roadmap-ai-ashah.onslate.in
+- **Repository:** https://github.com/Aangi-Shah1234/roadmap.ai
 
 ---
 
-## 🌟 Overview
+## About the Project
 
-**Roadmap.ai** is an interactive, full-stack tech engineering curriculum platform deployed on **Zoho Catalyst (Slate + Cloud Data Store)**. Designed to take anyone from absolute zero to job-ready developer, it provides structured visual milestone pathways across core technology disciplines—featuring hands-on concept readers, interactive checkboxes, real-time progress persistence, verified completion certificates, and a protected **Admin Curriculum Studio**.
+Learning technology can be overwhelming because beginners often don't know what to learn first, what to skip, or what order makes sense. Roadmap AI solves this problem by providing structured, easy-to-follow learning roadmaps across eight key technical fields:
 
----
+- DevOps Engineering
+- Cloud Architecture (AWS)
+- Frontend Development
+- Backend Development
+- Full Stack Development
+- AI & Machine Learning
+- Cybersecurity & Ethical Hacking
+- System Design & Architecture
 
-## 🚀 Key Features
-
-- **Beginner-Friendly Tech Pathways**:
-  - **DevOps Engineering** (`/roadmap/devops`) — Linux OS, Networking, Git, Docker, Kubernetes, CI/CD, Terraform.
-  - **Cloud Architecture (AWS)** (`/roadmap/cloud`) — AWS Core Services, IAM, VPC Networking, EC2, S3, RDS, Serverless.
-  - **Frontend Engineering** (`/roadmap/frontend`) — HTML/CSS, Modern JavaScript, React 19, Next.js, Tailwind CSS.
-  - **Backend Engineering** (`/roadmap/backend`) — Node.js, Go, Python, REST APIs, GraphQL, Databases, Caching.
-  - **Full Stack Development** (`/roadmap/fullstack`) — End-to-end web apps with TypeScript, Next.js, and ORMs.
-  - **AI & Machine Learning** (`/roadmap/ai-ml`) — Python, PyTorch, Deep Learning, LLMs, Vector DBs & RAG.
-  - **Cybersecurity & Ethical Hacking** (`/roadmap/cybersecurity`) — OWASP Top 10, Network Penetration, Cryptography.
-  - **System Design & Architecture** (`/roadmap/system-design`) — High-throughput systems, Load Balancing, Kafka, Sharding.
-- **Dual Theme System**: Beautiful, high-contrast Periwinkle, Sage, and Peach design tokens with light/dark theme toggling.
-- **Enterprise-Grade Authentication & Security**:
-  - Cryptographic **JWT session tokens** (`jose` with `HS256`).
-  - **Bcrypt password hashing** with 10 salt rounds (no plain-text passwords).
-  - Secure **`HttpOnly` + `SameSite=Lax` cookies** protecting against XSS and CSRF.
-  - Role-Based Access Control (**Learner** vs **Admin**).
-- **Verified Completion Certificates**: Client-side Canvas generator issuing deterministic credential verification IDs upon 100% track completion.
-- **DevOps Automation (Catalyst Pipelines)**: Automated CI/CD pipeline (`catalyst-pipelines.yaml`) executing isolated unit tests, database verification, and Next.js production builds on every Git push.
+Each track is broken down into clear milestones and bite-sized topics. Users can read focused concepts, explore curated tutorials and documentation, check off topics as they learn, and save their progress to their account.
 
 ---
 
-## 🏗️ Cloud Infrastructure (Zoho Catalyst)
+## How Zoho Catalyst is Used
 
-```mermaid
-flowchart TD
-    subgraph Client["User Browser"]
-        UI["Next.js 16 & React 19 UI (Pastel / Dark Theme)"]
-        Cert["HTML5 Canvas Certificate Generator"]
-    end
+This application is built and hosted entirely on **Zoho Catalyst**, taking advantage of three core platform services:
 
-    subgraph CatalystSlate["Zoho Catalyst Slate (Serverless Compute)"]
-        Auth["JWT Session & RBAC Middleware"]
-        API["Next.js Serverless API Route Handlers (/api/*)"]
-        SDK["zcatalyst-sdk-node Engine"]
-    end
+### 1. Catalyst Slate (Full-Stack Hosting)
+The application is built with Next.js 16 and deployed using Catalyst Slate. Slate handles:
+- Server-side rendering (SSR) and client-side routing.
+- Serverless API route execution (`/api/auth/*`, `/api/roadmaps/*`, `/api/progress`).
+- Automatic scaling based on incoming traffic with global CDN delivery.
 
-    subgraph CatalystData["Zoho Catalyst Data Store (Cloud DB)"]
-        Users[("Users Table")]
-        Subjects[("Subjects Table")]
-        Milestones[("Milestones Table")]
-        Topics[("Topics Table")]
-        Progress[("User_Progress Table")]
-    end
+### 2. Catalyst Data Store (Cloud Database)
+All persistent application data is stored in Catalyst Data Store across five relational tables:
+- `Users`: Stores user accounts, hashed passwords, and roles (learner or admin).
+- `Subjects`: Stores the 8 learning roadmaps, descriptions, categories, and icons.
+- `Milestones`: Stores the sequential learning stages within each roadmap.
+- `Topics`: Stores individual concept lessons, summaries, and external documentation links.
+- `User_Progress`: Stores which topics each user has completed so progress persists across sessions.
 
-    UI -->|HTTPS (TLS 1.3)| Auth --> API --> SDK
-    SDK --> Users & Subjects & Milestones & Topics & Progress
-    UI --> Cert
+### 3. Catalyst Pipelines (CI/CD Automation)
+The project uses `catalyst-pipelines.yaml` to run an automated CI/CD pipeline inside Catalyst DevOps. Whenever new code is pushed to GitHub:
+- Dependencies are installed in a clean cloud runner.
+- The 16-check automated test suite runs in an isolated sandbox environment.
+- The Next.js production build is verified before changes can be released.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router), React 19
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4 (with light and dark mode support)
+- **Cloud Platform:** Zoho Catalyst (Slate, Data Store, Pipelines)
+- **Authentication:** JSON Web Tokens (JWT via `jose`) with `bcryptjs` password hashing and HttpOnly cookies
+- **Testing:** Automated verification suite (`tests/verify-api.ts`)
+
+---
+
+## Project Structure
+
+```text
+roadmap-ai/
+├── src/
+│   ├── app/                 # Next.js App Router pages and API routes
+│   │   ├── api/             # Backend API handlers (auth, roadmaps, progress)
+│   │   ├── roadmap/[slug]/  # Interactive roadmap and lesson viewer
+│   │   ├── dashboard/       # User dashboard and progress overview
+│   │   ├── login/           # User sign-in page
+│   │   └── page.tsx         # Homepage
+│   ├── components/          # Reusable UI components (Navbar, Modals, Cards)
+│   ├── db/                  # Database schemas, seeding scripts, and helpers
+│   └── lib/                 # Auth utilities and lesson content
+├── tests/
+│   └── verify-api.ts        # 16-step automated verification test suite
+├── .catalyst/               # Catalyst Slate deployment configuration
+├── catalyst.json            # Project-level Catalyst configuration
+└── catalyst-pipelines.yaml  # DevOps CI/CD pipeline definition
 ```
 
-### 📊 Database Schema (Catalyst Data Store)
-
-1. **`Users`** (`ID: 92290000000025008`) — `name`, `email`, `password`, `role`.
-2. **`Subjects`** (`ID: 92290000000025375`) — `title`, `slug`, `description`, `icon`, `category`.
-3. **`Milestones`** (`ID: 92290000000025744`) — `subject_id`, `title`, `description`, `sort_order`, `level`.
-4. **`Topics`** (`ID: 92290000000034118`) — `milestone_id`, `title`, `description`, `resources`, `sort_order`.
-5. **`User_Progress`** (`ID: 92290000000034487`) — `user_id`, `topic_id`, `completed`.
-
 ---
 
-## 🔄 DevOps CI/CD Pipeline (`catalyst-pipelines.yaml`)
+## Running Locally
 
-```mermaid
-flowchart LR
-    Push["git push origin main"] --> TestStage["Stage 1: testStage"]
-    TestStage --> RunTests["Run 16 Automated API & DB Tests"]
-    RunTests --> BuildStage["Stage 2: buildStage"]
-    BuildStage --> NextBuild["Compile Production Next.js App"]
-    NextBuild --> DeployLive["Auto-Deploy to Catalyst Slate"]
-```
-
-The pipeline runs in an isolated cloud runner sandbox:
-1. **`testJob`**: Installs dependencies and runs the 16 automated tests in `tests/verify-api.ts`.
-2. **`buildJob`**: Validates TypeScript types and compiles Next.js with Turbopack.
-3. Protects live production data by executing all test mutations inside a sandboxed environment.
-
----
-
-## 🛠️ API Reference
-
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Public | Authenticates user or auto-provisions new accounts. Sets `roadmap_token` cookie. |
-| `POST` | `/api/auth/register` | Public | Creates new user account with bcrypt password hashing. |
-| `GET` | `/api/auth/me` | Public | Returns current authenticated user session. |
-| `POST` | `/api/auth/logout` | Public | Clears session cookie. |
-| `GET` | `/api/subjects` | Public | Returns all 8 roadmaps with milestone and topic counts. |
-| `GET` | `/api/roadmaps/[slug]` | Authenticated | Returns ordered milestones, topics, and user completion progress. |
-| `POST` | `/api/progress` | Authenticated | Toggles topic completion (`completed: true \| false`). |
-
----
-
-## 💻 Getting Started (Local Development)
-
-### 1. Clone & Install
+### 1. Clone the repository
 ```bash
 git clone https://github.com/Aangi-Shah1234/roadmap.ai.git
 cd roadmap.ai
+```
+
+### 2. Install dependencies
+```bash
 npm install
 ```
 
-### 2. Run Automated Verification Tests
+### 3. Run the automated tests
 ```bash
 npm test
 ```
-*Executes all 16 automated checks verifying users, roadmaps, milestones, topics, and auth.*
+This runs the 16 automated tests to verify user authentication, tracks, milestones, and topic data.
 
-### 3. Run Development Server
+### 4. Start the development server
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Deploy to Zoho Catalyst Slate
+---
+
+## Deployment
+
+### Deploying to Zoho Catalyst Slate
+
+To deploy updates directly to Catalyst Slate from the command line:
+
 ```bash
-# Deploy to Development
+# Deploy to Development environment
 catalyst deploy slate roadmap-ai -ni
 
-# Deploy to Production
+# Deploy to Production environment
 catalyst deploy slate roadmap-ai --production -ni
 ```
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ by Aangi Shah · Hosted on Zoho Catalyst</sub>
-</div>
+## License
+
+This project is open source and available under the MIT License.
