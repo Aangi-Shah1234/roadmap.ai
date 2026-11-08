@@ -2,142 +2,152 @@
 
 # Roadmap.ai
 
-**Interactive Engineering Learning Platform**
+**Learn Tech from Scratch, Step by Step.**
+
+*Easy-to-follow roadmaps with interactive lessons and progress tracking. No prior experience required — anyone can learn.*
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-SQLite_%2F_LibSQL-C5F74F?style=for-the-badge&logo=drizzle&logoColor=black)](https://orm.drizzle.team/)
-[![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Zoho Catalyst Slate](https://img.shields.io/badge/Zoho_Catalyst-Slate_Full--Stack-0070F3?style=for-the-badge&logo=zoho&logoColor=white)](https://catalyst.zoho.com/)
+[![Catalyst Data Store](https://img.shields.io/badge/Catalyst-Data_Store-009688?style=for-the-badge&logo=databricks&logoColor=white)](https://catalyst.zoho.com/)
+[![Catalyst Pipelines](https://img.shields.io/badge/DevOps-Catalyst_Pipelines-FF6F00?style=for-the-badge&logo=githubactions&logoColor=white)](https://catalyst.zoho.com/)
 
-[**Live Application**](https://roadmap-ai-steel.vercel.app) · [**Admin Studio**](https://roadmap-ai-steel.vercel.app/login?role=admin) · [**Learner Portal**](https://roadmap-ai-steel.vercel.app/login?role=learner)
+[**🌐 Live Application**](https://roadmap-ai-ashah.onslate.in) · [**🔐 Admin Portal**](https://roadmap-ai-ashah.onslate.in/login?role=admin) · [**🎓 Learner Portal**](https://roadmap-ai-ashah.onslate.in/login)
 
 </div>
 
 ---
 
-## Overview
+## 🌟 Overview
 
-**Roadmap.ai** is a full-stack interactive engineering curriculum platform built with Next.js 16, TypeScript, Tailwind CSS v4, and Drizzle ORM (LibSQL/SQLite). It provides structured, step-by-step learning pathways across core IT disciplines—complete with interactive milestone trails, in-depth concept readers, real-time progress tracking, verified completion certificates, and a role-protected **Admin Curriculum Studio**.
-
----
-
-## Key Features
-
-- **Interactive Engineering Roadmaps**:
-  - **DevOps Engineering** (`/roadmap/devops`) — Linux, Git, Docker, Kubernetes, CI/CD, Terraform, Prometheus.
-  - **Cloud Architecture** (`/roadmap/cloud`) — AWS Fundamentals, IAM, VPC Networking, Serverless, FinOps.
-  - **Full Stack Development** (`/roadmap/fullstack`) — React/Next.js, Node.js APIs, Relational Databases, ORMs, Auth.
-  - **AI & Machine Learning** (`/roadmap/ai-ml`) — Python, Linear Algebra, Scikit-Learn, Deep Learning, LLMs & RAG.
-  - **Cybersecurity & Ethical Hacking** (`/roadmap/cybersecurity`) — Network Security, Cryptography, Pentesting, SOC.
-  - **System Design & Architecture** (`/roadmap/system-design`) — Load Balancing, Caching, Sharding, Microservices.
-- **Dual Pastel & Dark Theme Engine**: High-contrast Periwinkle, Sage, and Peach design tokens with instant theme toggling.
-- **Role-Based JWT Authentication (`jose` + `bcryptjs`)**:
-  - **Learner Portal (`/dashboard`)**: Track completed topics, monitor active trail metrics, and resume milestones.
-  - **Admin Curriculum Studio (`/admin`)**: Create, manage, or delete subjects, sequential milestones, and topics in real time.
-- **Verified Track Completion Certificates**: HTML5 Canvas high-resolution PNG certificate generator with deterministic credential IDs, unlocked exclusively upon 100% pathway completion.
-- **Automated Verification & CI/CD**: 16-check automated test suite and GitHub Actions workflow verifying TypeScript types, database seeding, API integrity, production Next.js builds, and multi-stage Docker images on every push.
+**Roadmap.ai** is an interactive, full-stack tech engineering curriculum platform deployed on **Zoho Catalyst (Slate + Cloud Data Store)**. Designed to take anyone from absolute zero to job-ready developer, it provides structured visual milestone pathways across core technology disciplines—featuring hands-on concept readers, interactive checkboxes, real-time progress persistence, verified completion certificates, and a protected **Admin Curriculum Studio**.
 
 ---
 
-## System Architecture
+## 🚀 Key Features
+
+- **Beginner-Friendly Tech Pathways**:
+  - **DevOps Engineering** (`/roadmap/devops`) — Linux OS, Networking, Git, Docker, Kubernetes, CI/CD, Terraform.
+  - **Cloud Architecture (AWS)** (`/roadmap/cloud`) — AWS Core Services, IAM, VPC Networking, EC2, S3, RDS, Serverless.
+  - **Frontend Engineering** (`/roadmap/frontend`) — HTML/CSS, Modern JavaScript, React 19, Next.js, Tailwind CSS.
+  - **Backend Engineering** (`/roadmap/backend`) — Node.js, Go, Python, REST APIs, GraphQL, Databases, Caching.
+  - **Full Stack Development** (`/roadmap/fullstack`) — End-to-end web apps with TypeScript, Next.js, and ORMs.
+  - **AI & Machine Learning** (`/roadmap/ai-ml`) — Python, PyTorch, Deep Learning, LLMs, Vector DBs & RAG.
+  - **Cybersecurity & Ethical Hacking** (`/roadmap/cybersecurity`) — OWASP Top 10, Network Penetration, Cryptography.
+  - **System Design & Architecture** (`/roadmap/system-design`) — High-throughput systems, Load Balancing, Kafka, Sharding.
+- **Dual Theme System**: Beautiful, high-contrast Periwinkle, Sage, and Peach design tokens with light/dark theme toggling.
+- **Enterprise-Grade Authentication & Security**:
+  - Cryptographic **JWT session tokens** (`jose` with `HS256`).
+  - **Bcrypt password hashing** with 10 salt rounds (no plain-text passwords).
+  - Secure **`HttpOnly` + `SameSite=Lax` cookies** protecting against XSS and CSRF.
+  - Role-Based Access Control (**Learner** vs **Admin**).
+- **Verified Completion Certificates**: Client-side Canvas generator issuing deterministic credential verification IDs upon 100% track completion.
+- **DevOps Automation (Catalyst Pipelines)**: Automated CI/CD pipeline (`catalyst-pipelines.yaml`) executing isolated unit tests, database verification, and Next.js production builds on every Git push.
+
+---
+
+## 🏗️ Cloud Infrastructure (Zoho Catalyst)
 
 ```mermaid
 flowchart TD
-    subgraph Client["Client Browser"]
+    subgraph Client["User Browser"]
         UI["Next.js 16 & React 19 UI (Pastel / Dark Theme)"]
         Cert["HTML5 Canvas Certificate Generator"]
     end
 
-    subgraph App["Application Layer (Next.js App Router)"]
-        Auth["JWT Session & RBAC Middleware (jose)"]
-        API["REST API Route Handlers (/api/*)"]
-        ORM["Drizzle ORM Schema & Query Layer"]
+    subgraph CatalystSlate["Zoho Catalyst Slate (Serverless Compute)"]
+        Auth["JWT Session & RBAC Middleware"]
+        API["Next.js Serverless API Route Handlers (/api/*)"]
+        SDK["zcatalyst-sdk-node Engine"]
     end
 
-    subgraph Data["Persistence Layer"]
-        DB[("SQLite / LibSQL Database")]
+    subgraph CatalystData["Zoho Catalyst Data Store (Cloud DB)"]
+        Users[("Users Table")]
+        Subjects[("Subjects Table")]
+        Milestones[("Milestones Table")]
+        Topics[("Topics Table")]
+        Progress[("User_Progress Table")]
     end
 
-    UI -->|HTTPS| Auth --> API --> ORM --> DB
+    UI -->|HTTPS (TLS 1.3)| Auth --> API --> SDK
+    SDK --> Users & Subjects & Milestones & Topics & Progress
     UI --> Cert
 ```
 
-### Continuous Integration Pipeline (`.github/workflows/ci.yml`)
+### 📊 Database Schema (Catalyst Data Store)
+
+1. **`Users`** (`ID: 92290000000025008`) — `name`, `email`, `password`, `role`.
+2. **`Subjects`** (`ID: 92290000000025375`) — `title`, `slug`, `description`, `icon`, `category`.
+3. **`Milestones`** (`ID: 92290000000025744`) — `subject_id`, `title`, `description`, `sort_order`, `level`.
+4. **`Topics`** (`ID: 92290000000034118`) — `milestone_id`, `title`, `description`, `resources`, `sort_order`.
+5. **`User_Progress`** (`ID: 92290000000034487`) — `user_id`, `topic_id`, `completed`.
+
+---
+
+## 🔄 DevOps CI/CD Pipeline (`catalyst-pipelines.yaml`)
 
 ```mermaid
 flowchart LR
-    Push["git push origin main"] --> Typecheck["TypeScript Check (tsc --noEmit)"]
-    Typecheck --> Seed["Database Init & Seed"]
-    Seed --> Tests["16 Automated API & DB Tests"]
-    Tests --> NextBuild["Production Next.js Build"]
-    NextBuild --> DockerBuild["Multi-Stage Alpine Docker Build"]
+    Push["git push origin main"] --> TestStage["Stage 1: testStage"]
+    TestStage --> RunTests["Run 16 Automated API & DB Tests"]
+    RunTests --> BuildStage["Stage 2: buildStage"]
+    BuildStage --> NextBuild["Compile Production Next.js App"]
+    NextBuild --> DeployLive["Auto-Deploy to Catalyst Slate"]
 ```
 
----
-
-## Application & API Endpoints
-
-### Frontend Web Routes
-| Route | Access | Description |
-| :--- | :--- | :--- |
-| `/` | Public | Landing page, IT tracks directory, and interactive curriculum preview. |
-| `/login` | Public | Unified Sign-In portal with **Learner** and **Admin Studio** tabs (`?role=admin`). |
-| `/register` | Public | Account registration with role selection and automatic studio routing. |
-| `/dashboard` | Learner / Admin | Personal progress dashboard, completion statistics, and certificate claim (at 100%). |
-| `/admin` | Admin Only | Protected **Admin Studio** to create and manage subjects, milestones, and topics. |
-| `/roadmap/[slug]` | Authenticated | Interactive horizontal milestone trail, concept reader, and topic progress toggle. |
-
-### Backend REST API Endpoints
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/auth/login` | Authenticates user, provisions first-time accounts, and sets `roadmap_token` HTTP-only JWT cookie. |
-| `POST` | `/api/auth/register` | Creates a new Learner or Admin account with `bcryptjs` password hashing. |
-| `GET` | `/api/auth/me` | Verifies active JWT cookie and returns current session payload. |
-| `POST` | `/api/auth/logout` | Clears active session cookie. |
-| `GET` | `/api/subjects` | Returns all learning tracks enriched with user completion counts and percentages. |
-| `GET` | `/api/roadmaps/[slug]` | Returns subject metadata, ordered milestones, topics, and user progress statistics. |
-| `POST` | `/api/progress` | Toggles topic completion (`completed: true | false`) for the authenticated user. |
-| `POST` / `DELETE` | `/api/admin/subjects` | Admin endpoint to create or cascade-delete a learning track. |
-| `POST` / `DELETE` | `/api/admin/milestones` | Admin endpoint to add or remove sequential milestones. |
-| `POST` / `DELETE` | `/api/admin/topics` | Admin endpoint to add or remove topics and documentation links. |
+The pipeline runs in an isolated cloud runner sandbox:
+1. **`testJob`**: Installs dependencies and runs the 16 automated tests in `tests/verify-api.ts`.
+2. **`buildJob`**: Validates TypeScript types and compiles Next.js with Turbopack.
+3. Protects live production data by executing all test mutations inside a sandboxed environment.
 
 ---
 
-## Getting Started (Local Development)
+## 🛠️ API Reference
 
-### 1. Clone & Install Dependencies
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Public | Authenticates user or auto-provisions new accounts. Sets `roadmap_token` cookie. |
+| `POST` | `/api/auth/register` | Public | Creates new user account with bcrypt password hashing. |
+| `GET` | `/api/auth/me` | Public | Returns current authenticated user session. |
+| `POST` | `/api/auth/logout` | Public | Clears session cookie. |
+| `GET` | `/api/subjects` | Public | Returns all 8 roadmaps with milestone and topic counts. |
+| `GET` | `/api/roadmaps/[slug]` | Authenticated | Returns ordered milestones, topics, and user completion progress. |
+| `POST` | `/api/progress` | Authenticated | Toggles topic completion (`completed: true \| false`). |
+
+---
+
+## 💻 Getting Started (Local Development)
+
+### 1. Clone & Install
 ```bash
 git clone https://github.com/Aangi-Shah1234/roadmap.ai.git
 cd roadmap.ai
-npm install --legacy-peer-deps
+npm install
 ```
 
-### 2. Initialize & Seed the Database
+### 2. Run Automated Verification Tests
 ```bash
-npm run db:seed
+npm test
 ```
+*Executes all 16 automated checks verifying users, roadmaps, milestones, topics, and auth.*
 
-### 3. Run the Development Server
+### 3. Run Development Server
 ```bash
 npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 4. Run Typecheck & Automated Tests
+### 4. Deploy to Zoho Catalyst Slate
 ```bash
-npm run typecheck
-npm test
+# Deploy to Development
+catalyst deploy slate roadmap-ai -ni
+
+# Deploy to Production
+catalyst deploy slate roadmap-ai --production -ni
 ```
 
 ---
 
-## Docker Deployment
-
-Build and run the standalone production container locally or on any Linux server:
-
-```bash
-docker compose up --build -d
-```
-- Application listens on `http://localhost:3000`
-- Persistent SQLite database is stored in the `roadmap-data` volume mounted at `/app/data/roadmap.db`.
+<div align="center">
+  <sub>Built with ❤️ by Aangi Shah · Hosted on Zoho Catalyst</sub>
+</div>
