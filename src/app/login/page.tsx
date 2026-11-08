@@ -44,6 +44,16 @@ function LoginForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
 
+      if (data.token) {
+        localStorage.setItem("roadmap_token", data.token);
+      }
+      if (data.user) {
+        localStorage.setItem("roadmap_user", JSON.stringify(data.user));
+      }
+
+      // Small pause to guarantee cookie persistence on HTTPS before full navigation
+      await new Promise((r) => setTimeout(r, 150));
+
       if (data.user?.role === "admin" || role === "admin") {
         window.location.href = "/admin";
       } else {

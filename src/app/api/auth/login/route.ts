@@ -72,7 +72,7 @@ export async function POST(req: Request) {
         createdAt: new Date(),
       });
 
-      await setSessionCookie({
+      const token = await setSessionCookie({
         userId: newId,
         email: cleanEmail,
         name: userName,
@@ -81,6 +81,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json({
         success: true,
+        token,
         user: {
           id: newId,
           name: userName,
@@ -90,14 +91,19 @@ export async function POST(req: Request) {
       });
     }
 
-    let isValid = await bcrypt.compare(password, user.password);
+    const cleanPassword = typeof password === "string" ? password.trim() : "";
+    let isValid =
+      (await bcrypt.compare(cleanPassword, user.password)) ||
+      (await bcrypt.compare(password, user.password));
+
     if (!isValid) {
       // Seamless recovery for Shanvi or core admins using master password
       if (
         cleanEmail === "shanvi@gmail.com" ||
-        (isCoreAdminEmail && password === "AdminPassword123!")
+        (isCoreAdminEmail &&
+          (cleanPassword === "AdminPassword123!" || password === "AdminPassword123!"))
       ) {
-        const newHash = await bcrypt.hash(password, 10);
+        const newHash = await bcrypt.hash(cleanPassword, 10);
         await db
           .update(users)
           .set({ password: newHash })
@@ -128,7 +134,7 @@ export async function POST(req: Request) {
         .where(eq(users.id, user.id));
     }
 
-    await setSessionCookie({
+    const token = await setSessionCookie({
       userId: user.id,
       email: user.email,
       name: user.name,
@@ -137,6 +143,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
+      token,
       user: {
         id: user.id,
         name: user.name,

@@ -35,18 +35,41 @@ export async function verifyToken(token: string): Promise<SessionPayload | null>
 }
 
 export async function getCurrentUser(): Promise<SessionPayload | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token) return null;
-  return await verifyToken(token);
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get(COOKIE_NAME)?.value;
+    if (!token) return null;
+    return await verifyToken(token);
+  } catch {
+    return null;
+  }
+}
+
+export async function getSessionUser(req?: Request): Promise<SessionPayload | null> {
+  // 1. Try cookie session first
+  const cookieUser = await getCurrentUser();
+  if (cookieUser) return cookieUser;
+
+  // 2. Try Authorization Bearer header as reliable client fallback
+  if (req) {
+    const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.substring(7).trim();
+      const headerUser = await verifyToken(token);
+      if (headerUser) return headerUser;
+    }
+  }
+
+  return null;
 }
 
 export async function setSessionCookie(payload: SessionPayload): Promise<string> {
   const token = await signToken(payload);
   const cookieStore = await cookies();
+  const isSecure = process.env.NODE_ENV === "production" || Boolean(process.env.CATALYST_ENV);
   cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: false, // Must be false to support HTTP IP addresses (e.g. EC2 http://100.59.9.255)
+    secure: isSecure,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 7, // 7 days

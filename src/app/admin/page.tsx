@@ -50,7 +50,11 @@ export default function AdminPage() {
 
   const loadData = async () => {
     try {
-      const authRes = await fetch("/api/auth/me");
+      const token = typeof window !== "undefined" ? localStorage.getItem("roadmap_token") : null;
+      const authRes = await fetch("/api/auth/me", {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        cache: "no-store",
+      });
       const authJson = await authRes.json();
       if (!authJson.user || authJson.user.role !== "admin") {
         router.push("/login");

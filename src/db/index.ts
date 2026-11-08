@@ -100,7 +100,10 @@ export async function createTablesIfNotExist() {
   `);
 }
 
+let isDbReady = false;
+
 export async function ensureDatabaseReady() {
+  if (isDbReady) return;
   if (!initPromise) {
     initPromise = (async () => {
       try {
@@ -113,8 +116,9 @@ export async function ensureDatabaseReady() {
         const count = Number(check.rows[0]?.cnt || 0);
         if (count === 0) {
           const { seed } = await import("./seed");
-          await seed(true);
+          await seed(false);
         }
+        isDbReady = true;
       } catch (err) {
         console.error("Auto-init database error:", err);
       }

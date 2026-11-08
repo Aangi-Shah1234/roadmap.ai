@@ -22,7 +22,11 @@ export default function Navbar() {
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    fetch("/api/auth/me")
+    const token = typeof window !== "undefined" ? localStorage.getItem("roadmap_token") : null;
+    fetch("/api/auth/me", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      cache: "no-store",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.user) setUser(data.user);
@@ -37,6 +41,10 @@ export default function Navbar() {
   }, [pathname]);
 
   const handleLogout = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("roadmap_token");
+      localStorage.removeItem("roadmap_user");
+    }
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
     router.push("/");

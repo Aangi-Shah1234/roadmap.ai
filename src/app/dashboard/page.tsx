@@ -57,7 +57,11 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth/me", { cache: "no-store" })
+    const token = typeof window !== "undefined" ? localStorage.getItem("roadmap_token") : null;
+    fetch("/api/auth/me", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      cache: "no-store",
+    })
       .then((res) => res.json())
       .then((data) => {
         if (!data.user) {

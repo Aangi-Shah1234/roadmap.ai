@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         })
         .where(eq(users.id, existingUser[0].id));
 
-      await setSessionCookie({
+      const token = await setSessionCookie({
         userId: existingUser[0].id,
         email: existingUser[0].email,
         name: name.trim() || existingUser[0].name,
@@ -61,6 +61,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json({
         success: true,
+        token,
         user: {
           id: existingUser[0].id,
           name: name.trim() || existingUser[0].name,
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     });
 
-    await setSessionCookie({
+    const token = await setSessionCookie({
       userId,
       email: email.toLowerCase().trim(),
       name: name.trim(),
@@ -90,6 +91,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
+      token,
       user: { id: userId, name, email, role: effectiveRole },
     });
   } catch (err: any) {

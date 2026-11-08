@@ -3,6 +3,9 @@ import { users, subjects, milestones, topics, userProgress } from "./schema";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
+export const ADMIN_PASSWORD_HASH = "$2b$10$243yyf4k335I9zxELnsrku./lU3urlHCWKyKehd6j1mO7trnSwEPi";
+export const LEARNER_PASSWORD_HASH = "$2b$10$pOW3ZIQ9cZ1.S1.yf0WTeus1e.Fbwe1nmH0rsCDb54K1cM.MpIdKm";
+
 export async function seed(clearExisting = true) {
   console.log("🌱 Seeding database...");
 
@@ -18,8 +21,8 @@ export async function seed(clearExisting = true) {
     await db.delete(users);
   }
 
-  const adminPasswordHash = await bcrypt.hash("AdminPassword123!", 10);
-  const learnerPasswordHash = await bcrypt.hash("LearnerPassword123!", 10);
+  const adminPasswordHash = ADMIN_PASSWORD_HASH;
+  const learnerPasswordHash = LEARNER_PASSWORD_HASH;
 
   const learnerId = "user-learner";
 
