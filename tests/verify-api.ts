@@ -1,10 +1,13 @@
-import { db } from "../src/db";
+import { db, ensureDatabaseReady } from "../src/db";
 import { users, subjects, milestones, topics, userProgress } from "../src/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 async function runTests() {
   console.log("🧪 Starting Automated Test Suite for Roadmap AI...\n");
+
+  // Ensure tables and seed data exist in fresh environments (e.g. CI/CD runners)
+  await ensureDatabaseReady();
 
   let passed = 0;
   let failed = 0;

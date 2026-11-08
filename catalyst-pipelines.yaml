@@ -1,0 +1,22 @@
+version: 1.0
+
+jobs:
+  testJob:
+    steps:
+      - echo "Installing dependencies"
+      - npm install
+      - echo "Running automated tests"
+      - npm test
+
+  buildJob:
+    steps:
+      - echo "Building Next.js application"
+      - npm run build
+
+stages:
+  - name: testStage
+    jobs:
+      - testJob
+  - name: buildStage
+    jobs:
+      - buildJob
