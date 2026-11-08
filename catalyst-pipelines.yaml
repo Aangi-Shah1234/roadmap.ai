@@ -1,22 +1,16 @@
 version: 1.0
 
 jobs:
-  testJob:
+  buildAndTest:
     steps:
       - echo "Installing dependencies"
       - npm install
       - echo "Running automated tests"
       - npm test
-
-  buildJob:
-    steps:
       - echo "Building Next.js application"
       - npm run build
 
 stages:
-  - name: testStage
+  - name: pipelineStage
     jobs:
-      - testJob
-  - name: buildStage
-    jobs:
-      - buildJob
+      - buildAndTest
