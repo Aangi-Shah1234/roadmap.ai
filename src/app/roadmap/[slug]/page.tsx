@@ -702,10 +702,10 @@ export default function RoadmapPage({
           </aside>
 
           {/* Center Column: Deep Reading & Code Studio */}
-          <main className="flex-1 min-w-0 pb-36">
-            {/* Topic Metadata Eyebrow */}
-            <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-              <div className="flex items-center gap-2 text-xs">
+          <main className="flex-1 min-w-0 pb-16">
+            {/* Topic Metadata Eyebrow & Quick Complete Toggle */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-[var(--line)]">
+              <div className="flex items-center gap-2 text-xs flex-wrap">
                 <span className="px-2.5 py-1 rounded-full font-bold bg-[var(--line)] text-[var(--ink-soft)] text-[11px]">
                   Concept {currentFlatTopic.topicIndexInMilestone + 1} of {currentFlatTopic.totalTopicsInMilestone}
                 </span>
@@ -717,6 +717,29 @@ export default function RoadmapPage({
                   {lesson.timeEst}
                 </span>
               </div>
+
+              {/* Quick Header Toggle */}
+              <button
+                type="button"
+                onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
+                className={`self-start sm:self-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-2xs cursor-pointer ${
+                  currentTopic.isCompleted
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                    : "border border-[var(--line)] hover:border-[var(--periwinkle-deep)] bg-[var(--surface)] text-[var(--ink)] hover:text-[var(--periwinkle-deep)]"
+                }`}
+              >
+                {currentTopic.isCompleted ? (
+                  <>
+                    <CheckCheck className="w-3.5 h-3.5 text-white" />
+                    <span>Completed ✓</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[var(--periwinkle-deep)]" />
+                    <span>Mark as Complete</span>
+                  </>
+                )}
+              </button>
             </div>
 
             {/* Lesson Title & Intro */}
@@ -809,15 +832,15 @@ export default function RoadmapPage({
                 </div>
               </div>
 
-              {/* In-Flow Lesson Completion & Next Action Card */}
-              <div
-                className={`p-6 sm:p-8 rounded-2xl border transition-all ${
-                  currentTopic.isCompleted
-                    ? "bg-emerald-500/5 border-emerald-500/30"
-                    : "bg-[var(--surface)] border-[var(--line)] shadow-xs"
-                }`}
-              >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+              {/* In-Column Completion & Lesson Navigation */}
+              <div className="mt-10 pt-6 border-t border-[var(--line)] space-y-4">
+                <div
+                  className={`p-5 sm:p-6 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+                    currentTopic.isCompleted
+                      ? "bg-emerald-500/5 border-emerald-500/30"
+                      : "bg-[var(--surface)] border-[var(--line)] shadow-xs"
+                  }`}
+                >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       {currentTopic.isCompleted ? (
@@ -831,61 +854,77 @@ export default function RoadmapPage({
                         </span>
                       )}
                     </div>
-                    <h3 className="font-display text-lg sm:text-xl font-bold text-[var(--ink)]">
+                    <h3 className="font-display text-base sm:text-lg font-bold text-[var(--ink)]">
                       {currentTopic.isCompleted
-                        ? "You've completed this concept!"
+                        ? "Great job! You've completed this concept."
                         : "Finished reading this concept?"}
                     </h3>
                     <p className="text-xs sm:text-sm text-[var(--ink-soft)]">
                       {currentTopic.isCompleted
-                        ? "Progress saved. Continue to the next topic or review whenever you want."
-                        : "Mark as complete to save your progress and unlock the next lesson."}
+                        ? "Your progress has been saved. Continue to the next lesson."
+                        : "Mark as complete to save your progress to your profile."}
                     </p>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
+                    className={`w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer shadow-xs ${
+                      currentTopic.isCompleted
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                        : "border-2 border-[var(--periwinkle-deep)] text-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle-deep)] hover:text-white"
+                    }`}
+                  >
+                    {currentTopic.isCompleted ? (
+                      <>
+                        <CheckCheck className="w-4 h-4" />
+                        <span>Completed ✓</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span>Mark as Complete</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Symmetrical Prev / Next Buttons Contained Strictly Inside Reading Column */}
+                <div className="flex items-center justify-between gap-3 pt-2">
+                  {prevFlatTopic ? (
                     <button
                       type="button"
-                      onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
-                      className={`flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer shadow-xs ${
-                        currentTopic.isCompleted
-                          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                          : "border-2 border-[var(--periwinkle-deep)] text-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle-deep)] hover:text-white"
-                      }`}
+                      onClick={() => handleGoToTopic(prevFlatTopic.id, prevFlatTopic.milestoneIndex)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] border border-[var(--line)] hover:bg-[var(--bg)] transition cursor-pointer"
                     >
-                      {currentTopic.isCompleted ? (
-                        <>
-                          <CheckCheck className="w-4 h-4" />
-                          <span>Completed ✓</span>
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>Mark as Complete</span>
-                        </>
-                      )}
+                      <ChevronLeft className="w-4 h-4" />
+                      <span className="hidden sm:inline">Previous:</span>
+                      <span className="truncate max-w-[140px] sm:max-w-[200px]">{prevFlatTopic.title}</span>
                     </button>
+                  ) : (
+                    <div />
+                  )}
 
-                    {nextFlatTopic ? (
-                      <button
-                        type="button"
-                        onClick={() => handleGoToTopic(nextFlatTopic.id, nextFlatTopic.milestoneIndex)}
-                        className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)] transition cursor-pointer shadow-xs"
-                      >
-                        <span>Next Concept</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setShowCertModal(true)}
-                        className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition cursor-pointer shadow-xs"
-                      >
-                        <Award className="w-4 h-4" />
-                        <span>Finish & Claim Certificate</span>
-                      </button>
-                    )}
-                  </div>
+                  {nextFlatTopic ? (
+                    <button
+                      type="button"
+                      onClick={() => handleGoToTopic(nextFlatTopic.id, nextFlatTopic.milestoneIndex)}
+                      className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)] transition shadow-xs cursor-pointer ml-auto"
+                    >
+                      <span>Next:</span>
+                      <span className="truncate max-w-[140px] sm:max-w-[200px]">{nextFlatTopic.title}</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowCertModal(true)}
+                      className="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-xs cursor-pointer ml-auto"
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>Finish & Claim Certificate</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1012,92 +1051,6 @@ export default function RoadmapPage({
               </div>
             </div>
           </aside>
-        </div>
-
-        {/* Sleek Docked Bottom Navigation Bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--surface)]/95 backdrop-blur-md border-t border-[var(--line)] shadow-lg py-2.5 px-4 sm:px-8 transition-all">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-            {/* Left: Previous Concept or Track Milestone Info */}
-            <div className="flex items-center gap-2 min-w-0">
-              {prevFlatTopic ? (
-                <button
-                  type="button"
-                  onClick={() => handleGoToTopic(prevFlatTopic.id, prevFlatTopic.milestoneIndex)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold text-[var(--ink-soft)] hover:text-[var(--ink)] border border-[var(--line)] rounded-xl bg-[var(--bg)] hover:bg-[var(--surface)] transition cursor-pointer shrink-0 shadow-2xs"
-                >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Prev Concept</span>
-                  <span className="sm:hidden">Prev</span>
-                </button>
-              ) : (
-                <div className="hidden sm:flex items-center gap-2 text-xs text-[var(--ink-soft)] font-medium">
-                  <span className="w-2 h-2 rounded-full bg-[var(--periwinkle)]" />
-                  <span className="truncate max-w-[200px]">Step 0{currentMilestone.order}: {currentMilestone.title}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Right: Actions Group (Mark as Complete & Next Action) */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Mark as Complete Button */}
-              <button
-                type="button"
-                onClick={() => handleToggleComplete(currentTopic.id, !currentTopic.isCompleted)}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                  currentTopic.isCompleted
-                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
-                    : "bg-[var(--surface)] hover:bg-[var(--bg)] text-[var(--ink)] border border-[var(--line)] hover:border-[var(--periwinkle-deep)] shadow-2xs"
-                }`}
-              >
-                {currentTopic.isCompleted ? (
-                  <>
-                    <CheckCheck className="w-4 h-4 text-white" />
-                    <span>Completed</span>
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-[var(--periwinkle-deep)]" />
-                    <span>Mark as Complete</span>
-                  </>
-                )}
-              </button>
-
-              {/* Next Action Button */}
-              {nextFlatTopic ? (
-                <button
-                  type="button"
-                  onClick={() => handleGoToTopic(nextFlatTopic.id, nextFlatTopic.milestoneIndex)}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all cursor-pointer shadow-xs ${
-                    isNextMilestone
-                      ? "bg-[var(--periwinkle-deep)] hover:bg-[var(--periwinkle)] shadow-indigo-500/20"
-                      : "bg-[var(--ink)] hover:bg-[var(--periwinkle-deep)]"
-                  }`}
-                >
-                  {isNextMilestone ? (
-                    <>
-                      <span className="hidden sm:inline">Next Step ({nextFlatTopic.milestoneTitle})</span>
-                      <span className="sm:hidden">Next Step</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  ) : (
-                    <>
-                      <span>Next Concept</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setShowCertModal(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition shadow-xs cursor-pointer"
-                >
-                  <Award className="w-4 h-4" />
-                  <span>Claim Certificate</span>
-                </button>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Certificate Modal inside Cockpit */}
